@@ -33,6 +33,7 @@ public:
     QTextEdit *side;
     QPushButton *draw;
     QLabel *window;
+    QPushButton *fill;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -56,10 +57,13 @@ public:
         window = new QLabel(centralWidget);
         window->setObjectName(QString::fromUtf8("window"));
         window->setGeometry(QRect(250, 30, 500, 500));
+        fill = new QPushButton(centralWidget);
+        fill->setObjectName(QString::fromUtf8("fill"));
+        fill->setGeometry(QRect(50, 100, 97, 31));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 815, 27));
+        menuBar->setGeometry(QRect(0, 0, 815, 23));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -79,6 +83,7 @@ public:
         label->setText(QApplication::translate("MainWindow", "Side length", 0, QApplication::UnicodeUTF8));
         draw->setText(QApplication::translate("MainWindow", "Draw", 0, QApplication::UnicodeUTF8));
         window->setText(QString());
+        fill->setText(QApplication::translate("MainWindow", "Fill", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
