@@ -22,10 +22,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    int y;
     void drawLine(float x1, float y1, float x2, float y2, QRgb value = qRgb(255,255,255));
     void drawChessBoard(float side);
-    void floodFill(int x, int y, QRgb bgColour = qRgb(0,0,0), QRgb fillColour = qRgb(255,255,255));
+    void floodFill(int x, int y, QRgb bgColour = qRgb(0,0,0),  QRgb fillColour = qRgb(255,255,255));
 };
 
 #endif // MAINWINDOW_H

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <math.h>
+
 const int win_x = 500;
 const int win_y = 500;
 
@@ -18,7 +19,6 @@ int sign(float val)
     else
         return 0;
 }
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -105,33 +105,46 @@ void MainWindow::drawLine(float x1, float y1, float x2, float y2, QRgb value)
     }
 }
 
-
 void MainWindow::on_fill_clicked()
 {
     int side = ui->side->toPlainText().toInt();
     float unitsq = side/4;
+    unitsq = unitsq / sqrt(2);
+    float topy;
+    float x_right;// = const_topx;
+    float x_left;// = const_topx;
 
-    float topy = const_topy + unitsq;
-   // float topx_right = const_topx;
-    float topx_left = const_topx;
-
-    //for(int i = 0; i<4; i++)
+    for(int i = 0; i<4; i++)
     {
-        floodFill(topx_left, topy);
+        x_right = x_left = const_topx;
+        topy = const_topy + (2 * i + 1)*unitsq;
+        floodFill(const_topx, topy);
+        if(i%3)
+        {
+            x_right = x_right + 2 * unitsq;
+            x_left = x_left - 2 * unitsq;
+            floodFill(x_right, topy);
+            floodFill(x_left, topy);
+        }
     }
-
+    ui->window->setPixmap(QPixmap::fromImage(image));
+    ui->window->show();
 }
 
 void MainWindow::floodFill(int x, int y, QRgb bgColour, QRgb fillColour)
 {
     QRgb val = image.pixel(x,y);
-    if(val != bgColour)
+    if(val == bgColour)
+    {
+        image.setPixel(x,y,fillColour);
+        floodFill(x+1,y, bgColour, fillColour);
+        floodFill(x-1,y, bgColour, fillColour);
+        floodFill(x,y+1, bgColour, fillColour);
+        floodFill(x,y-1, bgColour, fillColour);
         return;
-    image.setPixel(x,y,fillColour);
-    floodFill(x+1,y, bgColour, fillColour);
-    floodFill(x-1,y, bgColour, fillColour);
-    floodFill(x,y+1, bgColour, fillColour);
-    floodFill(x,y-1, bgColour, fillColour);
+    }
+    else
+        return;
 }
 
 
