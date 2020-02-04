@@ -37,18 +37,19 @@ MainWindow::~MainWindow()
 void MainWindow::on_draw_clicked()
 {
     int side = ui->side->toPlainText().toInt();
-    drawChessBoard(side);
+    int squares = ui->squares->toPlainText().toInt();
+    drawChessBoard(side, squares);
     ui->window->setPixmap(QPixmap::fromImage(image));
     ui->window->show();
 }
 
-void MainWindow::drawChessBoard(float side)
+void MainWindow::drawChessBoard(float side, int squares)
 {
     side = side/sqrt(2);
     float topy, topx_right, topx_left;
     float leftx, rightx, boty;
-    float unitsq = side/4;
-    for(int i = 0; i<5; i++)
+    float unitsq = side/squares;
+    for(int i = 0; i<=squares; i++)
     {
         topx_right = const_topx + i*unitsq;
         topx_left = const_topx - i*unitsq;
@@ -108,24 +109,32 @@ void MainWindow::drawLine(float x1, float y1, float x2, float y2, QRgb value)
 void MainWindow::on_fill_clicked()
 {
     int side = ui->side->toPlainText().toInt();
-    float unitsq = side/4;
+    int squares = ui->squares->toPlainText().toInt();
+    float unitsq = side/squares;
     unitsq = unitsq / sqrt(2);
     float topy;
     float x_right;// = const_topx;
     float x_left;// = const_topx;
-
-    for(int i = 0; i<4; i++)
+    float mid = squares/2;
+    int k;
+    for(int i = 0; i<squares; i++)
     {
         x_right = x_left = const_topx;
         topy = const_topy + (2 * i + 1)*unitsq;
         floodFill(const_topx, topy);
-        if(i%3)
+
+        if(i<mid)
+            k = i;
+        else
+            k = squares - 1 -i;
+        for(int j = 0; j<k; j++)
         {
             x_right = x_right + 2 * unitsq;
             x_left = x_left - 2 * unitsq;
             floodFill(x_right, topy);
             floodFill(x_left, topy);
         }
+
     }
     ui->window->setPixmap(QPixmap::fromImage(image));
     ui->window->show();

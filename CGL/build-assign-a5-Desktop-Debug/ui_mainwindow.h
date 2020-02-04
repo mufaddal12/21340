@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 4.8.7
+** Created by: Qt User Interface Compiler version 4.8.6
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -34,6 +34,8 @@ public:
     QPushButton *draw;
     QLabel *window;
     QPushButton *fill;
+    QLabel *label_2;
+    QTextEdit *squares;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -47,19 +49,25 @@ public:
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         label = new QLabel(centralWidget);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(20, 10, 91, 21));
+        label->setGeometry(QRect(20, 20, 91, 21));
         side = new QTextEdit(centralWidget);
         side->setObjectName(QString::fromUtf8("side"));
-        side->setGeometry(QRect(110, 0, 104, 31));
+        side->setGeometry(QRect(110, 10, 104, 31));
         draw = new QPushButton(centralWidget);
         draw->setObjectName(QString::fromUtf8("draw"));
-        draw->setGeometry(QRect(50, 50, 97, 31));
+        draw->setGeometry(QRect(50, 90, 97, 31));
         window = new QLabel(centralWidget);
         window->setObjectName(QString::fromUtf8("window"));
         window->setGeometry(QRect(250, 30, 500, 500));
         fill = new QPushButton(centralWidget);
         fill->setObjectName(QString::fromUtf8("fill"));
-        fill->setGeometry(QRect(50, 100, 97, 31));
+        fill->setGeometry(QRect(50, 130, 97, 31));
+        label_2 = new QLabel(centralWidget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setGeometry(QRect(30, 60, 59, 15));
+        squares = new QTextEdit(centralWidget);
+        squares->setObjectName(QString::fromUtf8("squares"));
+        squares->setGeometry(QRect(110, 50, 104, 31));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -84,6 +92,7 @@ public:
         draw->setText(QApplication::translate("MainWindow", "Draw", 0, QApplication::UnicodeUTF8));
         window->setText(QString());
         fill->setText(QApplication::translate("MainWindow", "Fill", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("MainWindow", "Squares", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
