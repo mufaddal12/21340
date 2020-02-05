@@ -32,7 +32,7 @@ section .data
 	digits db 4
 	number db 4
 	indigs db 1
-
+	bcdhex dw 1
 	index db 0
 	
 	nl: db 0xA
@@ -55,12 +55,11 @@ _start:
 ;-------------------------all option cases-------------------
 case1:
 	input number, [digits]
-	dec al
-	mov r8, 0h
-	mov [indigs], al
 	mov cl, [indigs]
 	mov rax, number
 	call atoh
+	mov [bcdhex], ax
+	call htob
 	
 	
 
@@ -69,20 +68,27 @@ case3:	exit
 
 
 atoh:
+	xor ax, ax
+	xor bx, bx
 atohloop:
-	mov bl, [rax]
+	rol ax, 4
+	mov bl, byte[rax]
 	cmp bl, 39h
-	jbe dig
-	sub bl, 7h
-dig:	sub bl, 30h
-	
-	mov [rax], bl
-	inc rax
+	jbe sub30
+	sub bl, 07h
+sub30:
+	sub bl, 30h
+	add ax, bx	
+	inc rsi
 	dec cl
-	jnz atohloop
+	jnz atohloop	
 ret	
 
-
+htob:
+	mov ax, [bcdhex]
+	
+	
+ret
 
 
 
