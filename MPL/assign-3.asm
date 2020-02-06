@@ -43,18 +43,19 @@ section .text
 global _start
 
 _start:
-;--------------------Display Menu and take option-----------------
+;------------------------Display Menu and take option--------------------
 	print menu, lenmenu
 	input option, 2
 	mov al, [option]
 	cmp al, 31
 	jz case1
 	cmp al, 32
-	jz case1
+	jz case2
 	cmp al, 30
 	jz case3
-;-------------------------all option cases-------------------
+;-------------------------------All option cases-------------------------
 case1:
+	print menu, [menulen]
 	input number, 5
 	mov cl, 4
 	mov rsi, number
@@ -63,21 +64,30 @@ case1:
 	call hextobcd
 	exit
 	
-
 case2:
+	print menu, [menulen]
+	print menu, [menulen]
+	print option, 1
 	input number, 5
 	mov cl, 4
 	mov rsi, number
 	call bcdtohex
 	;mov [hexaval], ax
+	mov cl, 4
+	mov rsi, number
 	call hextoascii
 	mov rsi, number
 	mov cl, 4	
 	call printarr
 
-case3:	exit
+case3:	
+	print menu, [menulen]
+	print menu, [menulen]
+	print menu, [menulen]
+exit
+;----------------------------End of all options--------------------------
 
-;convert axcii values to hexa
+;----------------------Convert axcii values to hexa----------------------
 asciitohex:
 	xor ax, ax
 	xor bx, bx
@@ -95,7 +105,7 @@ sub30:
 	jnz atohloop	
 ret	
 
-;convert hexavalues in bcdhex to its corresponding bcd
+;----------convert hexavalues in bcdhex to its corresponding bcd----------
 hextobcd:
 
 	mov ax, [hexaval]
@@ -117,7 +127,7 @@ poploop:
 	jnz poploop	
 ret
 
-;convert entered bcd values to hexa values
+;--------------convert entered bcd values to hexa values-----------------
 bcdtohex:
 	xor ax, ax
 	xor bx, bx
@@ -133,10 +143,8 @@ btohloop:
 	dec cl
 	jnz btohloop
 ret
-
+;---------------------Convert hexa values to ascii----------------------
 hextoascii:
-	mov rsi, number
-	mov cl, 4
 	htoaloop:
 		rol ax, 04
 		mov bl, al
@@ -151,6 +159,8 @@ hextoascii:
 		jnz htoaloop	
 ret
 
+
+;---------------------------Print the digits----------------------------
 printarr:
 
 printarrloop:

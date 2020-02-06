@@ -20,6 +20,7 @@ class AdjMat
 	bool isPresent(int, int);
 	int kruskals();
 	int prims(int, int ar[]);
+	void getallmins(int arr[]);
 public:
 		AdjMat()
 		{
@@ -93,12 +94,57 @@ void AdjMat::showGraph()
 				cout<<"'"<<i<<"' -> '"<<j<<"' : "<<G[i][j]<<endl;
 }
 
+void AdjMat::getallmins(int arr[])
+{
+	for(int i = 1; i<=n; i++);
+}
+
 int AdjMat::kruskals()
 {
 	int *arr = new int[n+1];
 	for(int i = 1; i<=n; i++)
 		arr[i] = 0;
-
+	int min = 1000, temp, temp1;
+	int wt_tree = 0, count = 0;
+	int root_temp, root_temp1;
+	int fathe[MAX];
+	getallmins(father);
+	while(count<n-1)
+	{
+		min = 1000;
+		for(int v1 = 1; v1<=n; v1++)
+		{
+			for(int v2 = 1; v2<=n; v2++)
+			{
+				if(G[v1][v2] != 0 && min>G[v1][v2])
+				{
+					min = G[v1][v2];
+					temp = v1;
+					temp1 = v2;
+				}
+			}
+		}
+		int t = temp, t1 = temp1;
+		G[temp][temp1] = G[temp1][temp] = 0;
+		while(temp>0)
+		{
+			root_temp = temp;
+			temp = father[temp];
+		}
+		while(temp1>0)
+		{
+			root_temp1 = temp1;
+			temp1 = father[temp1];
+		}
+		if(root_temp != root_temp1)
+		{
+			result[t][t1] = result[t1][t] = min;
+			wt_tree += result[t1][t];
+			father[root_temp1] = root_temp;
+			count++;
+		}
+	}
+	return wt_tree;
 }
 
 int main()
