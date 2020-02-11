@@ -48,8 +48,9 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *m)
 {
     Point p(m->x(), m->y());
 
-    poly.addPoint(p);
+
     drawLineDDA(p, poly.getTop());
+    poly.addPoint(p);
     ui->window->setPixmap(QPixmap::fromImage(image));
     ui->window->show();
 }

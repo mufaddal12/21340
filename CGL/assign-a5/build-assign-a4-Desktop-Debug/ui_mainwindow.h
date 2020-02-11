@@ -44,7 +44,8 @@ public:
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         window = new QLabel(centralWidget);
         window->setObjectName(QString::fromUtf8("window"));
-        window->setGeometry(QRect(40, 20, 500, 500));
+        window->setGeometry(QRect(0, 0, 500, 500));
+        window->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
         palette = new QLabel(centralWidget);
         palette->setObjectName(QString::fromUtf8("palette"));
         palette->setGeometry(QRect(590, 30, 256, 256));
