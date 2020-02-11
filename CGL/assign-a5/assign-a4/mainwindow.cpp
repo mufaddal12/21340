@@ -40,16 +40,18 @@ void MainWindow::mousePressEvent(QMouseEvent *m)
     int y = m->y();
 
     Point p(x,y);
-    drawLineDDA(p,p);
-    if(poly.vertices)
-    {
-        poly.addPoint(p);
-        Point p2 = p;
-        Point p1 = poly.getTop();
-        drawLineDDA(p1,p2);
-    }
-    else poly.addPoint(p);
+    poly.addPoint(p);
     //drawLineDDA();
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *m)
+{
+    Point p(m->x(), m->y());
+
+    poly.addPoint(p);
+    drawLineDDA(p, poly.getTop());
+    ui->window->setPixmap(QPixmap::fromImage(image));
+    ui->window->show();
 }
 
 void MainWindow::drawLineDDA(Point p1, Point p2, QRgb value)

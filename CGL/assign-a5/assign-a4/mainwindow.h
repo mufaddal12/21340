@@ -61,7 +61,7 @@ public:
 private slots:
     void on_pushButton_clicked();
     void mousePressEvent(QMouseEvent *);
-
+    void mouseReleaseEvent(QMouseEvent *);
 private:
     Ui::MainWindow *ui;
     void drawLineDDA(Point p1, Point p2, QRgb value = qRgb(0,255,255));
