@@ -27,7 +27,7 @@ section .data
 	db "0. Exit", 0xA,
 	db " Select an option : ",
 	lenmenu equ $-menu
-	option db 2
+	
 
 	digits db 4
 	bcddigits db 0
@@ -38,6 +38,7 @@ section .data
 section .bss
 	number resb 4
 	result resb 1
+	option resb 2
 section .text
 
 global _start
@@ -46,16 +47,16 @@ _start:
 ;------------------------Display Menu and take option--------------------
 	print menu, lenmenu
 	input option, 2
-	mov al, [option]
-	cmp al, 31
+	mov al, byte[option]
+	cmp al, 31h
 	jz case1
-	cmp al, 32
+	cmp al, 32h
 	jz case2
-	cmp al, 30
+	cmp al, 30h
 	jz case3
 ;-------------------------------All option cases-------------------------
 case1:
-	print menu, [menulen]
+	;print menu, lenmenu
 	input number, 5
 	mov cl, 4
 	mov rsi, number
@@ -65,26 +66,17 @@ case1:
 	exit
 	
 case2:
-	print menu, [menulen]
-	print menu, [menulen]
-	print option, 1
-	input number, 5
-	mov cl, 4
+	input number, 6
+	mov cl, 5
 	mov rsi, number
 	call bcdtohex
-	;mov [hexaval], ax
 	mov cl, 4
 	mov rsi, number
 	call hextoascii
-	mov rsi, number
-	mov cl, 4	
-	call printarr
+	print number, 4
 
 case3:	
-	print menu, [menulen]
-	print menu, [menulen]
-	print menu, [menulen]
-exit
+	exit
 ;----------------------------End of all options--------------------------
 
 ;----------------------Convert axcii values to hexa----------------------
@@ -136,6 +128,7 @@ bcdtohex:
 	mov bx, 0xA
 btohloop:
 	mul bx
+	xor dx,dx
 	mov dl, byte[rsi]
 	sub dl, 30h
 	add ax, dx
@@ -143,13 +136,14 @@ btohloop:
 	dec cl
 	jnz btohloop
 ret
+
 ;---------------------Convert hexa values to ascii----------------------
 hextoascii:
 	htoaloop:
 		rol ax, 04
 		mov bl, al
 		and bl, 0xF
-		cmp bl, 09
+		cmp bl, 09h
 		jbe x
 		add bl, 07
 	x:	add bl, 30h
@@ -158,20 +152,6 @@ hextoascii:
 		dec cl
 		jnz htoaloop	
 ret
-
-
-;---------------------------Print the digits----------------------------
-printarr:
-
-printarrloop:
-	mov dl, byte[rsi]
-	mov [result], dl
-	print result, 1
-	inc rsi
-	dec cl
-	jnz printarrloop	
-ret
-
 
 
 
