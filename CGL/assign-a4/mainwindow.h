@@ -6,47 +6,45 @@
 #include <QVector>
 
 namespace Ui {
+class Point;
 class Polygon;
 class MainWindow;
 }
 
 class Point
 {
+    int px, py;
 public:
     Point(int h=0,int k=0)
     {
-        x=h;
-        y=k;
+        px=h;
+        py=k;
     }
-
-    int x, y;
+    int x(){return px;}
+    int y(){return py;}
+    bool range(int x, int y, int offset_x, int offset_y);
+    void addOffset(int, int);
+    friend class Polygon;
 };
 
 class Polygon
 {
-
     QVector<Point> allPoints;
     int vertices;
-    Polygon(int n =0)
+    QRgb fillColour;
+public:
+    Polygon()
     {
         vertices = 0;
+        fillColour = qRgb(0,0,0);
     }
-    void addPoint(Point p)
-    {
-        allPoints.push_back(p);
-        vertices++;
-    }
-    Point getTop()
-    {
-        if(vertices)
-            return allPoints[vertices-1];
-        else
-        {
-            Point p;
-            return p;
-        }
-    }
-
+    void addVertex(Point p);
+    Point getFront();
+    Point getRear();
+    int isEmpty();
+    void clearPoly();
+    void changeColour(int, int, int);
+    friend void seedFill(int, int, QRgb, QRgb);
     friend class MainWindow;
 };
 
@@ -59,12 +57,16 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
     void mousePressEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
+
+    void on_clear_clicked();
+
 private:
     Ui::MainWindow *ui;
-    void drawLineDDA(Point p1, Point p2, QRgb value = qRgb(0,255,255));
+    void inWindowLabel();
+    void inPaletteLabel();
+    //void drawLineDDA(Point p1, Point p2, QRgb value = qRgb(0,255,255));
 };
 
 #endif // MAINWINDOW_H
