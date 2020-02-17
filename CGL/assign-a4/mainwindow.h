@@ -41,7 +41,7 @@ public:
     void addVertex(Point p);
     Point getFront();
     Point getRear();
-    int isEmpty();
+    bool isEmpty();
     void clearPoly();
     void changeColour(int, int, int);
     friend void seedFill(int, int, QRgb, QRgb);
@@ -62,11 +62,15 @@ private slots:
 
     void on_clear_clicked();
 
+    void on_red_valueChanged(int value);
+
+    void on_green_valueChanged(int value);
+
+    void on_blue_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
-    void inWindowLabel();
-    void inPaletteLabel();
-    //void drawLineDDA(Point p1, Point p2, QRgb value = qRgb(0,255,255));
+    void changeDisplay(int r, int g, int b);
 };
 
 #endif // MAINWINDOW_H

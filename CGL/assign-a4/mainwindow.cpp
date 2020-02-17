@@ -10,73 +10,6 @@ QImage image(win_x, win_y, QImage::Format_RGB888);
 QImage image2(256, 256, QImage::Format_RGB888);
 QImage image3(20, 256, QImage::Format_RGB888);
 
-void Point::addOffset(int x, int y)
-{
-    px -= x;
-    py -= y;
-}
-
-bool Point::range(int x, int y, int offset_x, int offset_y)
-{
-    if(px>=x && px<(x + offset_x))
-        if(py>=y && py<(y + offset_y))
-            return true;
-    return false;
-}
-
-void Polygon::addVertex(Point p)
-{
-    allPoints.push_back(p);
-    vertices++;
-}
-
-Point Polygon::getFront()
-{
-    if(!isEmpty())
-        return allPoints[vertices-1];
-    else
-    {
-        Point p;
-        return p;
-    }
-}
-
-Point Polygon::getRear()
-{
-    if(!isEmpty())
-        return allPoints[0];
-    else
-    {
-        Point p;
-        return p;
-    }
-}
-
-int Polygon::isEmpty()
-{
-    return vertices==0;
-}
-
-void Polygon::clearPoly()
-{
-    vertices = 0;
-    allPoints.clear();
-}
-
-void Polygon::changeColour(int r = 0, int g = 0 , int b = 0 )
-{
-    int R = qRed(fillColour);
-    int G = qGreen(fillColour);
-    int B = qBlue(fillColour);
-    if(r != 0)
-       R = r;
-    if(b != 0)
-        B = b;
-    if(g != 0)
-        G = g;
-    fillColour = qRgb(R,G,B);
-}
-
 int sign(float val)
 {
     if(val>0)
@@ -112,15 +45,88 @@ void drawLineDDA(Point p1, Point p2, QRgb value = qRgb(0,255,255))
 
 void seedFill(int x, int y, QRgb fillColour, QRgb backColour = qRgb(0,0,0))
 {
-    if(image.pixel(x, y) != backColour)
-        return;
+    if(fillColour != backColour)
+    {
+        if(x>=0 && x<win_x && y>=0 && y<win_y)
+        {
+            if(image.pixel(x, y) != backColour)
+                return;
+            else
+            {
+                image.setPixel(x, y, fillColour);
+                seedFill(x, y+1, fillColour, backColour);
+                seedFill(x, y-1, fillColour, backColour);
+                seedFill(x-1, y, fillColour, backColour);
+                seedFill(x+1, y, fillColour, backColour);
+            }
+        }
+    }
+}
+
+void Point::addOffset(int x, int y)
+{
+    px -= x;
+    py -= y;
+}
+
+void Polygon::addVertex(Point p)
+{
+    allPoints.push_back(p);
+    vertices++;
+}
+
+void Polygon::clearPoly()
+{
+    vertices = 0;
+    allPoints.clear();
+}
+
+void Polygon::changeColour(int r = 0, int g = 0 , int b = 0 )
+{
+    int R = qRed(fillColour);
+    int G = qGreen(fillColour);
+    int B = qBlue(fillColour);
+    if(r != 0)
+       R = r;
+    if(b != 0)
+        B = b;
+    if(g != 0)
+        G = g;
+    fillColour = qRgb(R,G,B);
+}
+
+bool Point::range(int x, int y, int offset_x, int offset_y)
+{
+    if(px>=x && px<(x + offset_x))
+        if(py>=y && py<(y + offset_y))
+            return true;
+    return false;
+}
+
+bool Polygon::isEmpty()
+{
+    return vertices==0;
+}
+
+Point Polygon::getFront()
+{
+    if(!isEmpty())
+        return allPoints[vertices-1];
     else
     {
-        image.setPixel(x, y, fillColour);
-        seedFill(x, y+1, fillColour);
-        seedFill(x, y-1, fillColour);
-        seedFill(x-1, y, fillColour);
-        seedFill(x+1, y, fillColour);
+        Point p;
+        return p;
+    }
+}
+
+Point Polygon::getRear()
+{
+    if(!isEmpty())
+        return allPoints[0];
+    else
+    {
+        Point p;
+        return p;
     }
 }
 
@@ -136,7 +142,6 @@ MainWindow::MainWindow(QWidget *parent) :
         for(int j = 0; j<20; j++)
             image3.setPixel(j,i,qRgb(0,0,i));
     }
-
 
     ui->window->setPixmap(QPixmap::fromImage(image));
     ui->window->show();
@@ -166,7 +171,8 @@ void MainWindow::mousePressEvent(QMouseEvent *m)
         }
         else if(m->button() == Qt::MidButton)
         {
-            seedFill(p.x(), p.y(), poly.fillColour);
+            QRgb back = image.pixel(p.x(), p.y());
+            seedFill(p.x(), p.y(), poly.fillColour, back);
         }
     }
     else if(p.range(600, 20, 256, 256))
@@ -205,11 +211,6 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *m)
     ui->window->show();
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
-
 void MainWindow::on_clear_clicked()
 {
     for(int i = 0; i<win_x; i++)
@@ -219,3 +220,75 @@ void MainWindow::on_clear_clicked()
     ui->window->show();
     poly.clearPoly();
 }
+
+void MainWindow::changeDisplay(int r, int g, int b)
+{
+    QImage colour(50, 50, QImage::Format_RGB888);
+    for(int i = 0; i<50; i++)
+        for(int j = 0; j<50; j++)
+            colour.setPixel(i,j, qRgb(r,g,b));
+    ui->colour->setPixmap(QPixmap::fromImage(colour));
+    ui->colour->show();
+}
+
+void MainWindow::on_red_valueChanged(int value)
+{
+    int r = value;
+    int g = ui->green->value();
+    int b = ui->blue->value();
+    changeDisplay(r,g,b);
+
+    QImage colour(20, 20, QImage::Format_RGB888);
+    for(int i = 0; i<20; i++)
+        for(int j = 0; j<20; j++)
+            colour.setPixel(i,j, qRgb(r,0,0));
+    ui->red_label->setPixmap(QPixmap::fromImage(colour));
+    ui->red_label->show();
+
+    poly.changeColour(r,g,b);
+}
+
+void MainWindow::on_green_valueChanged(int value)
+{
+    int r = ui->red->value();
+    int g = value;
+    int b = ui->blue->value();
+    changeDisplay(r,g,b);
+
+    QImage colour(20, 20, QImage::Format_RGB888);
+    for(int i = 0; i<20; i++)
+        for(int j = 0; j<20; j++)
+            colour.setPixel(i,j, qRgb(0,g,0));
+    ui->green_label->setPixmap(QPixmap::fromImage(colour));
+    ui->green_label->show();
+
+    poly.changeColour(r,g,b);
+}
+
+void MainWindow::on_blue_valueChanged(int value)
+{
+    int r =  ui->red->value();
+    int g = ui->green->value();
+    int b = value;
+    changeDisplay(r,g,b);
+
+    QImage colour(20, 20, QImage::Format_RGB888);
+    for(int i = 0; i<20; i++)
+        for(int j = 0; j<20; j++)
+            colour.setPixel(i,j, qRgb(0,0,b));
+    ui->blue_label->setPixmap(QPixmap::fromImage(colour));
+    ui->blue_label->show();
+
+    poly.changeColour(r,g,b);
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+
+
+
+
+
