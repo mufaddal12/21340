@@ -104,7 +104,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 971, 27));
+        menuBar->setGeometry(QRect(0, 0, 971, 22));
         menuBar->setDefaultUp(false);
         menuBar->setNativeMenuBar(true);
         MainWindow->setMenuBar(menuBar);

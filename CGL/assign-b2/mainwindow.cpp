@@ -17,7 +17,6 @@ void fillPalette(int b = 0)
             image2.setPixel(i,j,qRgb(i,j,b));
 }
 
-
 int sign(float val)
 {
     if(val>0)
@@ -179,7 +178,7 @@ void MainWindow::mousePressEvent(QMouseEvent *m)
     else if(p.range(600, 20, 256, 256))
     {
         p.addOffset(600, 20);
-        poly.changeLineColour(image2.pixel(p.x(), p.y()));
+        poly.changeFillColour(image2.pixel(p.x(), p.y()));
     }
     else if(p.range(860, 20, 30, 256))
     {
@@ -247,7 +246,7 @@ void MainWindow::on_red_valueChanged(int value)
     ui->red_label->setPixmap(QPixmap::fromImage(colour));
     ui->red_label->show();
 
-    poly.changeLineColour(clr);
+    poly.changeFillColour(clr);
 }
 
 void MainWindow::on_green_valueChanged(int value)
@@ -265,7 +264,7 @@ void MainWindow::on_green_valueChanged(int value)
     ui->green_label->setPixmap(QPixmap::fromImage(colour));
     ui->green_label->show();
 
-    poly.changeLineColour(clr);
+    poly.changeFillColour(clr);
 }
 
 void MainWindow::on_blue_valueChanged(int value)
@@ -283,7 +282,7 @@ void MainWindow::on_blue_valueChanged(int value)
     ui->blue_label->setPixmap(QPixmap::fromImage(colour));
     ui->blue_label->show();
 
-    poly.changeLineColour(clr);
+    poly.changeFillColour(clr);
 }
 
 MainWindow::~MainWindow()

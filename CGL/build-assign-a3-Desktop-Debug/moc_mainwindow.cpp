@@ -6,7 +6,7 @@
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../assign-a4/mainwindow.h"
+#include "../assign-a3/mainwindow.h"
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'mainwindow.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 63
@@ -22,48 +22,26 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       0,    0, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
- // slots: signature, parameters, type, tag, flags
-      12,   11,   11,   11, 0x08,
-      42,   11,   11,   11, 0x08,
-      74,   11,   11,   11, 0x08,
-      99,   93,   11,   11, 0x08,
-     124,   93,   11,   11, 0x08,
-     151,   93,   11,   11, 0x08,
-
        0        // eod
 };
 
 static const char qt_meta_stringdata_MainWindow[] = {
-    "MainWindow\0\0mousePressEvent(QMouseEvent*)\0"
-    "mouseReleaseEvent(QMouseEvent*)\0"
-    "on_clear_clicked()\0value\0"
-    "on_red_valueChanged(int)\0"
-    "on_green_valueChanged(int)\0"
-    "on_blue_valueChanged(int)\0"
+    "MainWindow\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
-    if (_c == QMetaObject::InvokeMetaMethod) {
-        Q_ASSERT(staticMetaObject.cast(_o));
-        MainWindow *_t = static_cast<MainWindow *>(_o);
-        switch (_id) {
-        case 0: _t->mousePressEvent((*reinterpret_cast< QMouseEvent*(*)>(_a[1]))); break;
-        case 1: _t->mouseReleaseEvent((*reinterpret_cast< QMouseEvent*(*)>(_a[1]))); break;
-        case 2: _t->on_clear_clicked(); break;
-        case 3: _t->on_red_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 4: _t->on_green_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 5: _t->on_blue_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        default: ;
-        }
-    }
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
 }
 
 const QMetaObjectExtraData MainWindow::staticMetaObjectExtraData = {
@@ -97,11 +75,6 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QMainWindow::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
-    if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
-            qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
-    }
     return _id;
 }
 QT_END_MOC_NAMESPACE
