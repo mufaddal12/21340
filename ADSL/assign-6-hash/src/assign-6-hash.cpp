@@ -38,9 +38,9 @@ class HashMap
 		void insertWithoutRep(int key, int val);
 		void insertWithRep(int key, int val);
 		void deleteKey(int key);
-		void find(int key);
+		int find(int key);
 		void display();
-		float averageCostWithRep();
+		float averageCost();
 };
 
 int HashMap::hashFunc(int key)
@@ -56,7 +56,7 @@ void HashMap::insertWithoutRep(int key, int val)
 	while(table[i].key != 0)
 	{
 		i++;
-		if(i==n) i = 0;
+		i = i%n;
 		if(i == ind) break;
 		firstHit = false;
 	}
@@ -103,7 +103,7 @@ void HashMap::display()
 	}
 }
 
-float HashMap::averageCostWithRep()
+float HashMap::averageCost()
 {
 	int totalcost = 0;
 	int count = 0;
@@ -114,6 +114,7 @@ float HashMap::averageCostWithRep()
 		{
 			int ind = hashFunc(d.key);
 			count ++;
+			totalcost++;
 			while(table[ind].key != d.key)
 			{
 				totalcost++;
@@ -122,8 +123,53 @@ float HashMap::averageCostWithRep()
 			}
 		}
 	}
-	float avg = float(totalcost)/count;
+	float avg = totalcost/float(count);
 	return avg;
+}
+
+int HashMap::find(int key)
+{
+	int ind = hashFunc(key);
+	if(table[ind].key == 0)
+	{
+		cout<<"Key '"<<key<<"' not found";
+		return -1;
+	}
+	else
+	{
+		int i = ind;
+		while(table[i].key != key)
+		{
+			i++;
+			i = i%n;
+			if(i==ind)
+			{
+				i = -1;
+				break;
+			}
+		}
+		if(i != -1)
+		{
+			cout<<"Key   : "<<key<<" ";
+			cout<<"Value : "<<table[i].value;
+		}
+		else
+			cout<<"Key '"<<key<<"' not found";
+
+		return i;
+	}
+
+}
+
+void HashMap::deleteKey(int key)
+{
+	int ind = find(key);
+	if(ind != -1)
+	{
+		cout<<" deleted\n";
+		table[ind].key = 0;
+		table[ind].value = 0;
+	}
 }
 
 int main() {
@@ -163,15 +209,18 @@ int main() {
 			break;
 
 			case 2:
-
+				cout<<"Key : "; cin>>key;
+				key = h.find(key);
+				cout<<endl;
 			break;
 
 			case 3:
-
+				cout<<"Key : "; cin>>key;
+				h.deleteKey(key);
 			break;
 
 			case 4:
-				cout<<"Average search cost is "<<h.averageCostWithRep()<<endl;
+				cout<<"Average search cost is "<<h.averageCost()<<endl;
 
 			break;
 
