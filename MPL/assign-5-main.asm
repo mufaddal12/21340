@@ -47,26 +47,41 @@ section .data
 	db "0. Exit", 0xA,
 	db "  Option : "
 	menulen: equ $-menu
-	fname : db "data.txt"
+	fname : db "data.txt", 0
 	errorMsg : db "File Not Found", 0xA
 	errorLen : equ $-errorMsg
-	
+	linemsg : db "No. Of lines : "
+	linelen : equ $-linemsg
+	spacemsg : db "No. Of spaces : "
+	spacelen : equ $-spacemsg
+	charmsg : db "No. of times character appears : "
+	charlen : equ $-charmsg
+	global chars, lines, spaces
+	chars : db 0
+	lines : db 0
+	spaces : db 0
 section .bss
+	global character, buffer, bufferlen
 	character resb 2
 	opt resb 2
 	fd resb 8
 	buffer: resb 200
-	bufferlen: resb 8
+	bufferlen: resq 1
+
 section .text
 	
 global _start:
-
+	extern hextoascii, countspaces, countlines, countchar
 _start:
 ;------------------------Display Menu and take option--------------------
 	openFile fname
 	mov qword[fd], rax
 	bt rax, 63
 	jc fileError
+
+	readFile [fd], buffer, 200
+	mov [bufferlen], rax	;rax contains length of the file in bytes
+
 	print menu, menulen
 	input opt, 2
 	print nl, 1
@@ -80,10 +95,24 @@ _start:
 	cmp al, 30h
 	jz case0
 	
-case1:
-	readFile [fd], buffer, 200
+case1:		
+	print spacemsg, spacelen
+	call countspaces
+	print nl, 1
+	exit
 case2:
+	print linemsg, linelen
+	call countlines
+	print nl, 1
+	exit
 case3:
+	print msg, msglen
+	input character, 2
+	print nl, 1
+	print charmsg, charlen
+	call countchar
+	print nl, 1
+	exit
 fileError:
 	print errorMsg, errorLen
 case0:
