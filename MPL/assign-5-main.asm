@@ -47,7 +47,7 @@ section .data
 	db "0. Exit", 0xA,
 	db "  Option : "
 	menulen: equ $-menu
-	fname : db "data.txt", 0
+	fname : db "data-a5.txt", 0
 	errorMsg : db "File Not Found", 0xA
 	errorLen : equ $-errorMsg
 	linemsg : db "No. Of lines : "
