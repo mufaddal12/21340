@@ -32,6 +32,7 @@ class HashMap
 	Data table[MAX];
 	int n;
 	int hashFunc(string key);
+	int getIndex(string key);
 	public:
 		HashMap(int k = 26)
 		{
@@ -51,6 +52,17 @@ class HashMap
 int HashMap::hashFunc(string key)
 {
 	return (key[0]-'a')%26;
+}
+
+int HashMap::getIndex(string key)
+{
+	int i = hashFunc(key);
+	while(i!=-1)
+	{
+		if(table[i].name == key) break;
+		i = table[i].next;
+	}
+	return i;
 }
 
 void HashMap::insertWithoutRep(string key, int val)
@@ -103,27 +115,85 @@ void HashMap::insertWithRep(string key, int val)
 		else
 		{
 			Data d(key, val);
-			table[ind] = d;
-			insertWithoutRep(newd.name, newd.value);
+			//table[ind] = d;
 			int prev = newind;
+			int nextind = table[ind].next;
 			while(newind != ind)
 			{
 				prev = newind;
 				newind = table[newind].next;
 			}
-			table[prev].next = ind;
+			table[prev].next = nextind;
+			table[ind] = d;
+			insertWithoutRep(newd.name, newd.value);
 		}
 
 	}
 }
 
+int HashMap::find(string key)
+{
+	int i = getIndex(key);
+	if(i!=-1)
+		return table[i].value;
+	return i;
+}
+
+void HashMap::deleteKey(string key)
+{
+	int ind = getIndex(key);
+	if(ind == -1)
+		cout<<"Key not Found\n";
+	else
+	{
+		int newind = hashFunc(key);
+		int prev = newind;
+		int next = table[ind].next;
+		while(newind != ind)
+		{
+			prev = newind;
+			newind = table[newind].next;
+		}
+		table[prev].next = next;
+		Data dold = table[ind];
+		Data d;
+		table[ind] = d;
+		cout<<"Data for key '"<<key<<"' deleted\n";
+	}
+
+}
+
 void HashMap::display()
 {
-	cout<<setw(7)<<"Index"<<setw(5)<<"Key"<<setw(7)<<"Value"<<setw(6)<<"Next"<<endl;
+	cout<<setw(7)<<"Index"<<setw(5)<<"Char"<<setw(5)<<"Key"<<setw(7)<<"Value"<<setw(6)<<"Next"<<endl;
 	for(int i = 0; i<n; i++)
 	{
-		cout<<setw(7)<<char(i+'a')<<setw(5)<<table[i].name<<setw(7)<<table[i].value<<setw(6)<<table[i].next<<endl;
+		cout<<setw(7)<<i<<setw(5)<<char(i+'a')<<setw(5)<<table[i].name<<setw(7)<<table[i].value<<setw(6)<<table[i].next<<endl;
 	}
+}
+
+float HashMap::averageCost()
+{
+	int allCount = 0;
+	int total = 0;
+	for(int i = 0; i<n; i++)
+	{
+		string key = table[i].name;
+		if(key!="")
+		{
+			int j = hashFunc(key);
+			allCount++;
+			while(j!=-1)
+			{
+				if(table[j].name == key) break;
+				j = table[j].next;
+				allCount++;
+			}
+			total++;
+		}
+	}
+	if(total==0) return 0;
+	return float(allCount)/float(total);
 }
 
 int main() {
@@ -165,17 +235,20 @@ int main() {
 
 			case 2:
 				cout<<"Key : "; cin>>key;
-				//key = h.find(key);
-				cout<<endl;
+				val = h.find(key);
+				if(val==-1)
+					cout<<"Key '"<<key<<"' not found\n";
+				else
+					cout<<"Value : "<<val<<endl;
 			break;
 
 			case 3:
 				cout<<"Key : "; cin>>key;
-				//h.deleteKey(key);
+				h.deleteKey(key);
 			break;
 
 			case 4:
-				//cout<<"Average search cost is "<<h.averageCost()<<endl;
+				cout<<"Average search cost is "<<h.averageCost()<<endl;
 
 			break;
 
