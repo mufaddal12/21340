@@ -69,6 +69,7 @@ section .bss
 	fd: resb 8
 	buffer: resb 200
 	n: resq 1
+	fd_in: resb 8
 section .txt
 
 global _start
@@ -77,6 +78,7 @@ _start:
 
 	openFile fname
 	mov [fd], rax
+	mov [fd_in], rax
 	bt rax, 63
 	jc fileerror
 	print opensuccess, openlen
@@ -94,7 +96,7 @@ _start:
 	print nl, 1
 
 writeFile [fd], buffer, [n]
-closeFile [fd]
+closeFile [fd_in]
 exit
 	
 fileerror:
