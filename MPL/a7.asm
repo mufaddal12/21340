@@ -66,10 +66,9 @@ section .data
 	sortlen : equ $-sortArray
 	nl: db 0xA
 section .bss
-	fd: resb 8
+	fd: resq 1
 	buffer: resb 200
 	n: resq 1
-	fd_in: resb 8
 section .txt
 
 global _start
@@ -81,22 +80,25 @@ _start:
 	mov [fd_in], rax
 	bt rax, 63
 	jc fileerror
+
 	print opensuccess, openlen
+
 	readFile [fd], buffer, 200
 	mov [n], rax
-	
+	dec qword[n]
+
 	print orgArray, orglen
-	print buffer, n
+	print buffer, [n]
 	print nl, 1
 
 	call bubbleSort
 
 	print sortArray, sortlen
-	print buffer, n
+	print buffer, [n]
 	print nl, 1
 
-writeFile [fd], buffer, [n]
-closeFile [fd_in]
+	writeFile [fd], buffer, [n]
+	closeFile [fd]
 exit
 	
 fileerror:
@@ -111,11 +113,9 @@ bubbleSort:
 	mov rsi, buffer
 outer:	
 	mov r8, 0
-	
+	mov r9, 1
 	inner:	
-		mov r9, r8
-		inc r9
-
+		
 		mov al, byte[rsi+r8]
 		mov bl, byte[rsi+r9]
 		cmp al, bl
@@ -128,7 +128,7 @@ outer:
 		mov byte[rsi+r9], bl
 		inc r8
 		inc r9
-		cmp r8, rdx
+		cmp r9, rdx
 		jl inner
 	inc rcx
 	cmp rcx, rdx

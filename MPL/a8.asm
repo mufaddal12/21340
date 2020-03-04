@@ -1,8 +1,8 @@
-%macro write 2
+%macro write 3
 	mov rax, 01
-	mov rdi, 01
-	mov rsi, %1
-	mov rdx, %2
+	mov rdi, %1
+	mov rsi, %2
+	mov rdx, %3
 	syscall
 %endmacro
 
@@ -17,8 +17,14 @@
 %macro openFile 1
 	mov rax, 2
 	mov rdi, %1
-	mov rsi, 2
-	mov rdx, 0777
+	mov rsi, 0102o
+	mov rdx, 0666o
+	syscall
+%endmacro
+
+%macro closeFile 1
+	mov rax, 3
+	mov rdi, %1
 	syscall
 %endmacro
 
@@ -40,10 +46,12 @@ section .data
 
 	nl : db 0xA
 section .bss
-	srcfname: resb 8
+	srcf: resb 12
+	destf: resb 12
 	buffer: resb 200
 	bufferlen: resq 1
-	fd: resb 8
+	fd1: resq 1
+	fd2: resq 1
 	var: resq 1
 section .txt
 global _start
@@ -62,28 +70,63 @@ _start:
 	cmp byte[rax], 'D'
 	je deletecase
 
+	exit
+
 typecase:
 	pop rax
 	mov rbx, [rax]
-	mov [srcfname], rbx
-	openFile srcfname
-	mov [fd], rax
+	mov [srcf], rbx
+	openFile srcf
+
+	mov [fd1], rax
 	bt rax, 63
 	jc fileerror
-	write opensuccess, openlen
-	read [fd], buffer, 200
-	mov [bufferlen], rax
-	write buffer, bufferlen
-	write nl, 1
+
+	write 01, opensuccess, openlen
+	read [fd1], buffer, 200
+	mov qword[bufferlen], rax
+	write 01, buffer, [bufferlen]
+	;write nl, 1
 	exit
+
 copycase:
+	pop rax
+	mov rbx, [rax]
+	mov [srcf], rbx
+
+	openFile srcf
+	mov [fd1], rax
+	
+	bt rax, 63
+	jc fileerror
+
+	pop rax
+	mov rbx, [rax]
+	mov [destf], rbx
+
+	openFile destf
+	mov [fd2], rax
+
+	read [fd1], buffer, 200
+	mov [bufferlen], rax
+
+	write [fd2], buffer, [bufferlen]
+	
+	closeFile [fd1]
+	closeFile [fd2]
+
 	exit
+
 deletecase:
+	pop rbx
+	mov rax, 87
+	mov rdi, rbx
+	syscall
 	exit	
 	
 fileerror:
-	write errormsg, errorlen
-	
+	write 01,errormsg, errorlen
+	exit
 	
 	
 	
