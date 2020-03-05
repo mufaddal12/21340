@@ -35,8 +35,6 @@
 %endmacro
 
 section .data
-	msg: db "hello world", 0xA
-	msglen: equ $-msg
 
 	opensuccess : db "File Opened Successfully", 0xA
 	openlen : equ $-opensuccess
