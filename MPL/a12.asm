@@ -36,7 +36,7 @@
 
 section .data
 
-	array: dd 10.00, 20.00, 50.00, 60.00, 50.00
+	array: dd 2.00, 2.00, 2.00, 1.00, 3.00
 
 	meanmsg: db "Mean : "
 	meanlen: equ $-meanmsg
@@ -54,6 +54,7 @@ section .data
 section .bss
 	mean: resd 1
 	var: resd 1
+	std: resd 1
 	buffer: rest 1
 	result: resb 1
 section .txt
@@ -82,11 +83,11 @@ sumloop:
 
 	fldz
 varloop:
-	fldz
 	fld dword[rsi]
 	fsub dword[mean]
 	fmul st0
-	inc rsi
+	fadd
+	add rsi, 4
 	dec ecx
 	jnz varloop
 	
@@ -94,6 +95,13 @@ varloop:
 	fst dword[var]
 	write 01, varmsg, varlen
 	call print
+	write 01, nl, 1
+
+	write 01, stdmsg, stdlen
+	fld dword[var]
+	fsqrt
+	fst dword[std]
+	call print 
 	write 01, nl, 1
 	exit
 	
