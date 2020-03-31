@@ -42,7 +42,7 @@ bool Polygon::isEmpty()
 Point Polygon::getFront()
 {
     if(!isEmpty())
-        return allPoints[vertices-1];
+        return allPoints[0];
     else
     {
         Point p;
@@ -53,7 +53,7 @@ Point Polygon::getFront()
 Point Polygon::getRear()
 {
     if(!isEmpty())
-        return allPoints[0];
+        return allPoints[vertices-1];
     else
     {
         Point p;
@@ -72,6 +72,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->window->setPixmap(QPixmap::fromImage(image));
+    ui->window->show();
 }
 
 int sign(float val)
@@ -106,21 +108,6 @@ void drawLineDDA(Point p1, Point p2, QRgb value = qRgb(0,255,255))
     }
 }
 
-void MainWindow::changeViewPoly(Point p)
-{
-    bool l = false, r = false, u = false, b = false;
-    int x = p.x();
-    int y = p.y();
-    if(x<A.x())
-        l = true;
-    if(x>D.x())
-        r = true;
-    if(y<A.y())
-        u = true;
-    if(y>B.y())
-        b = true;
-}
-
 void MainWindow::mousePressEvent(QMouseEvent *m)
 {
     int x = m->x();
@@ -131,54 +118,164 @@ void MainWindow::mousePressEvent(QMouseEvent *m)
         p.addOffset(20, 20);
         if(m->button() == Qt::LeftButton)
         {
-            if(actualPoly.isEmpty())
-            {
-
-                actualPoly.addVertex(p);
-
-
-            }
-            else
-            {
-                actualPoly.addVertex(p);
-                Point p1 = actualPoly.getFront();
-
-                changeViewPoly(p1);
-            }
+            if(poly.isEmpty())
+                poly.addVertex(p);
         }
         else if(m->button() == Qt::RightButton)
         {
-            if(actualPoly.isEmpty())
-                actualPoly.addVertex(p);
-            else
-            {
-
-            }
+            if(poly.isEmpty())
+                poly.addVertex(p);
         }
-
     }
 }
 
+void MainWindow::mouseReleaseEvent(QMouseEvent *m)
+{
+    Point p(m->x(), m->y());
+    if(p.range(20, 20, win_x,win_y))
+    {
+        p.addOffset(20, 20);
+        if(m->button() == Qt::LeftButton)
+        {
+            drawLineDDA(p, poly.getRear(), poly.lineColour);
+            poly.addVertex(p);
+        }
+        else if(m->button() == Qt::RightButton)
+        {
+            drawLineDDA(poly.getFront(), poly.getRear(), poly.lineColour);
+            poly.addVertex(poly.getFront());
+        }
+    }
+    ui->window->setPixmap(QPixmap::fromImage(image));
+    ui->window->show();
+}
+void clearScreen()
+{
+    for(int i = 0; i<win_x; i++)
+        for(int j = 0; j<win_y; j++)
+            image.setPixel(i, j, qRgb(0,0,0));
+}
 void MainWindow::on_pushButton_clicked()
 {
     int x1 = ui->x1->toPlainText().toInt();
     int y1 = ui->y1->toPlainText().toInt();
     int x2 = ui->x2->toPlainText().toInt();
     int y2 = ui->y2->toPlainText().toInt();
-    drawLineDDA(A,B, qRgb(0,0,0));
-    drawLineDDA(B,C, qRgb(0,0,0));
-    drawLineDDA(C,D, qRgb(0,0,0));
-    drawLineDDA(D,A, qRgb(0,0,0));
+    clearScreen();
     A.change(x1,y1), B.change(x1, y2), C.change(x2,y2), D.change(x2, y1);
     drawLineDDA(A,B);
     drawLineDDA(B,C);
     drawLineDDA(C,D);
     drawLineDDA(D,A);
+    clipPolygon();
     ui->window->setPixmap(QPixmap::fromImage(image));
     ui->window->show();
 }
 
+Bools MainWindow::getBools(Point p)
+{
+    Bools ret;
+    if(p.x() < A.x()) ret.l = true;
+    if(p.y() > B.y()) ret.b = true;
+    if(p.x() > C.x()) ret.r = true;
+    if(p.y() < D.y()) ret.u = true;
 
+    return ret;
+}
+
+Point MainWindow::findPrime(float m, Point p, Bools b)
+{
+    Point ret(-1,-1);
+    if(b.l)
+    {
+        int int_x = A.x();
+        int int_y;
+        float y = m*(int_x-p.x()) + p.y();
+        int_y = floor(y);
+        if(int_y > B.y() || int_y<D.y())
+            return ret;
+        ret.change(int_x, int_y);
+        return ret;
+    }
+    if(b.r)
+    {
+        int int_x = C.x();
+        int int_y;
+        float y = m*(int_x-p.x()) + p.y();
+        int_y = floor(y);
+        if(int_y > B.y() || int_y<D.y())
+            return ret;
+        ret.change(int_x, int_y);
+        return ret;
+    }
+    if(b.u)
+    {
+        int int_y = D.y();
+        int int_x;
+        float x = (int_y - p.y() + m*p.x())/m;
+        int_x = floor(x);
+        if(int_x>C.x() || int_x<A.x())
+            return ret;
+        ret.change(int_x, int_y);
+        return ret;
+    }
+    if(b.b)
+    {
+        int int_y = B.y();
+        int int_x;
+        float x = (int_y - p.y() + m*p.x())/m;
+        int_x = floor(x);
+        if(int_x>C.x() || int_x<A.x())
+            return ret;
+        ret.change(int_x, int_y);
+        return ret;
+    }
+}
+
+void MainWindow::clipPolygon()
+{
+    if(poly.vertices)
+    {
+        Point p1 = poly.getFront(), p2;
+        Point p1_prime, p2_prime;
+        Bools b1 = getBools(p1);
+        Bools b2;
+        for(int v = 1; v<poly.vertices; v++)
+        {
+            p2 = poly.allPoints[v];
+            b2 = getBools(p2);
+            if(!b1.anding(b2))
+            {
+                float m = (p1.y() - p2.y())/float(p1.x()-p2.x());
+
+                if(b1.isAllFalse())
+                {
+                    p1_prime = p1;
+                }
+                else
+                {
+                    p1_prime = findPrime(m, p1, b1);
+                }
+
+                if(b2.isAllFalse())
+                {
+                    p2_prime = p2;
+                }
+                else
+                {
+                    p2_prime = findPrime(m, p2, b2);
+                }
+                //drawLineDDA(p2, p1, qRgb(0,0,0));
+                if(p1_prime.x() >= 0 && p2_prime.x() >= 0)
+                    drawLineDDA(p2_prime, p1_prime, poly.lineColour);
+            }
+           // else
+               // drawLineDDA(p2, p1, qRgb(0,0,0));
+            p1 = p2;
+            b1 = b2;
+        }
+    }
+}
 
 
 

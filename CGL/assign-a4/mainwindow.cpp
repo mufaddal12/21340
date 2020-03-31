@@ -111,7 +111,7 @@ bool Polygon::isEmpty()
     return vertices==0;
 }
 
-Point Polygon::getFront()
+Point Polygon::getRear()
 {
     if(!isEmpty())
         return allPoints[vertices-1];
@@ -122,7 +122,7 @@ Point Polygon::getFront()
     }
 }
 
-Point Polygon::getRear()
+Point Polygon::getFront()
 {
     if(!isEmpty())
         return allPoints[0];
@@ -199,13 +199,13 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *m)
         p.addOffset(20, 20);
         if(m->button() == Qt::LeftButton)
         {
-            drawLineDDA(p, poly.getFront(), poly.lineColour);
+            drawLineDDA(p, poly.getRear(), poly.lineColour);
             poly.addVertex(p);
         }
         else if(m->button() == Qt::RightButton)
         {
-            drawLineDDA(poly.getRear(), poly.getFront(), poly.lineColour);
-            poly.addVertex(poly.getRear());
+            drawLineDDA(poly.getFront(), poly.getRear(), poly.lineColour);
+            poly.addVertex(poly.getFront());
         }
     }
     ui->window->setPixmap(QPixmap::fromImage(image));
