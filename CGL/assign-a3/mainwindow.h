@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QVector>
 
 namespace Ui {
 class Point;
@@ -9,11 +10,32 @@ class Polygon;
 class MainWindow;
 }
 
+class Point;
+
 class Matrix
 {
-    vector<vector<float>> mat;
+    QVector<QVector<float>> mat;
     int m, n;
-
+public:
+    Matrix(int r = 0, int c = 0)
+    {
+        m = r;
+        n = c;
+        for(int i = 0; i<m; i++)
+        {
+            QVector<float> row;
+            for(int j = 0; j<n; j++)
+            {
+                row.push_back(0);
+            }
+            mat.push_back(row);
+        }
+    }
+    void addRow(QVector<float> row){mat.push_back(row); n = row.size(); m++;}
+    void addRow(Point p);
+    void clear(){mat.clear(); m=n=0;}
+    QVector<float> getRow(int i){return mat[i];}
+    Matrix operator *(const Matrix A);
 };
 
 class Point
@@ -34,30 +56,45 @@ public:
 
 class Polygon
 {
-    QVector<Point> allPoints;
+    Matrix allPoints;
+    QRgb lineColour;
     int vertices;
 public:
     Polygon()
     {
         vertices = 0;
-        fillColour = qRgb(0,0,0);
         lineColour = qRgb(255,255,255);
     }
     void addVertex(Point p);
     Point getFront();
     Point getRear();
+    Point getPoint(int i);
     bool isEmpty();
     void clearPoly();
+    void rotate(int theta, int x=-1, int y=-1);
+    void translate(int x, int y);
+    void scale(float x, float y);
+    void display(int x = 0,int y = 0);
     friend class MainWindow;
 };
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
+    Polygon poly;
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+private slots:
+    /*void mousePressEvent(QMouseEvent *m);
+    void mouseReleaseEvent(QMouseEvent *m);*/
+    void on_scale_clicked();
+
+    void on_translate_clicked();
+
+    void on_rotate_clicked();
+
+    void on_input_clicked();
 
 private:
     Ui::MainWindow *ui;
