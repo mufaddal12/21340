@@ -3,7 +3,6 @@
 #include <QMouseEvent>
 #include <math.h>
 #include<QString>
-
 #define PI 3.14
 
 const int win_x = 500;
@@ -84,29 +83,11 @@ void clearScreen()
         for(int j = 0; j<win_y; j++)
             image.setPixel(i, j, qRgb(0,0,0));
     Point p1(0, -250), p2(0, 249), p3(-250, 0), p4(249, 0);
+    Point tl(-250,-250), br(249, 249), bl(-250, 249), tr(249, -250);
     drawLineDDA(p1, p2, qRgb(50,50,50));
     drawLineDDA(p3, p4, qRgb(50,50,50));
-}
-
-Matrix getScaleMatrix(float x, float y)
-{
-    Matrix scale;
-    QVector<float> row;
-    row.push_back(x);
-    row.push_back(0);
-    row.push_back(0);
-    scale.addRow(row);
-    row.clear();
-    row.push_back(0);
-    row.push_back(y);
-    row.push_back(0);
-    scale.addRow(row);
-    row.clear();
-    row.push_back(0);
-    row.push_back(0);
-    row.push_back(1);
-    scale.addRow(row);
-    return scale;
+    drawLineDDA(tl, br, qRgb(50,50,50));
+    drawLineDDA(tr, bl, qRgb(50,50,50));
 }
 
 Matrix getTranslationMatrix(int x, int y)
@@ -151,6 +132,69 @@ Matrix getRotationMatrix(int theta)
     row.push_back(1);
     scale.addRow(row);
     return scale;
+}
+
+Matrix getReflectAboutXMatrix()
+{
+    Matrix ref;
+    QVector<float> row;
+    row.push_back(1);
+    row.push_back(0);
+    row.push_back(0);
+    ref.addRow(row);
+    row.clear();
+    row.push_back(0);
+    row.push_back(-1);
+    row.push_back(0);
+    ref.addRow(row);
+    row.clear();
+    row.push_back(0);
+    row.push_back(0);
+    row.push_back(1);
+    ref.addRow(row);
+    return ref;
+}
+
+Matrix getReflectAboutYMatrix()
+{
+    Matrix ref;
+    QVector<float> row;
+    row.push_back(-1);
+    row.push_back(0);
+    row.push_back(0);
+    ref.addRow(row);
+    row.clear();
+    row.push_back(0);
+    row.push_back(1);
+    row.push_back(0);
+    ref.addRow(row);
+    row.clear();
+    row.push_back(0);
+    row.push_back(0);
+    row.push_back(1);
+    ref.addRow(row);
+    return ref;
+}
+
+Matrix getReflectAboutX_YMatrix()
+{
+    Matrix ref;
+    QVector<float> row;
+    row.push_back(0);
+    row.push_back(1);
+    row.push_back(0);
+    ref.addRow(row);
+    row.clear();
+    row.push_back(1);
+    row.push_back(0);
+    row.push_back(0);
+    ref.addRow(row);
+    row.clear();
+    row.push_back(0);
+    row.push_back(0);
+    row.push_back(1);
+    ref.addRow(row);
+    return ref;
 }
 
 void Point::addOffset(int x, int y)
@@ -217,26 +261,6 @@ Point Polygon::getRear()
     }
 }
 
-void Polygon::scale(float x, float y)
-{
-    Matrix scale = getScaleMatrix(x,y);
-    float mid_x = 0, mid_y = 0;
-    for(int r = 0; r<vertices-1; r++)
-    {
-        QVector<float> p = allPoints.getRow(r);
-        mid_x += p[0];
-        mid_y += p[1];
-    }
-    mid_x /= float(vertices-1);
-    mid_y /= float(vertices-1);
-
-    Matrix trans = getTranslationMatrix(floor(-mid_x), floor(-mid_y));
-    allPoints = allPoints * trans;
-    allPoints = allPoints * scale;
-    trans = getTranslationMatrix(floor(mid_x), floor(mid_y));
-    allPoints = allPoints * trans;
-}
-
 void Polygon::translate(int x, int y)
 {
     Matrix transActual = getTranslationMatrix(x,y);
@@ -267,6 +291,24 @@ void Polygon::rotate(int theta, int x, int y)
     allPoints = allPoints * trans;
 }
 
+void Polygon::reflectAboutX()
+{
+    Matrix reflect = getReflectAboutXMatrix();
+    allPoints = allPoints * reflect;
+}
+
+void Polygon::reflectAboutY()
+{
+    Matrix reflect = getReflectAboutYMatrix();
+    allPoints = allPoints * reflect;
+}
+
+void Polygon::reflectAboutX_Y()
+{
+    Matrix reflect = getReflectAboutX_YMatrix();
+    allPoints = allPoints * reflect;
+}
+
 void Polygon::display(int off_x, int off_y)
 {
     for(int i = 1; i<vertices; i++)
@@ -291,32 +333,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->window->show();
 }
 
-void MainWindow::on_scale_clicked()
-{
-    float scale_x = ui->x->toPlainText().toFloat();
-    float scale_y = ui->y->toPlainText().toFloat();
-    poly.scale(scale_x, scale_y);
-    clearScreen();
-    poly.display();
-    ui->window->setPixmap(QPixmap::fromImage(image));
-    ui->window->show();
-}
-
-void MainWindow::on_translate_clicked()
-{
-    int x = ui->x->toPlainText().toInt();
-    int y = ui->y->toPlainText().toInt();
-    poly.translate(x, y);
-    clearScreen();
-    poly.display();
-    ui->window->setPixmap(QPixmap::fromImage(image));
-    ui->window->show();
-}
-
 void MainWindow::on_rotate_clicked()
 {
-
-    QString sx = ui->x->toPlainText();
+    QString sx = ui->x_2->toPlainText();
     if(sx=="")
     {
         int theta = ui->theta->toPlainText().toInt();
@@ -326,8 +345,8 @@ void MainWindow::on_rotate_clicked()
     }
     else
     {
-        int x = ui->x->toPlainText().toInt();
-        int y = ui->y->toPlainText().toInt();
+        int x = ui->x_2->toPlainText().toInt();
+        int y = ui->y_2->toPlainText().toInt();
         int theta = ui->theta->toPlainText().toInt();
         poly.rotate(theta, x, y);
         clearScreen();
@@ -355,8 +374,34 @@ void MainWindow::on_input_clicked()
     ui->window->show();
 }
 
+
+void MainWindow::on_reflect_clicked()
+{
+    if(ui->xaxis->isChecked())
+    {
+        poly.reflectAboutX();
+        clearScreen();
+        poly.display();
+    }
+    else if(ui->yaxis->isChecked())
+    {
+        poly.reflectAboutY();
+        clearScreen();
+        poly.display();
+    }
+    else if(ui->xy->isChecked())
+    {
+        poly.reflectAboutX_Y();
+        clearScreen();
+        poly.display();
+    }
+    ui->window->setPixmap(QPixmap::fromImage(image));
+    ui->window->show();
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 
