@@ -19,7 +19,6 @@
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
 #include <QtGui/QStatusBar>
-#include <QtGui/QTextEdit>
 #include <QtGui/QToolBar>
 #include <QtGui/QWidget>
 
@@ -31,11 +30,6 @@ public:
     QWidget *centralWidget;
     QLabel *window;
     QPushButton *next;
-    QLabel *label_9;
-    QLabel *label_10;
-    QPushButton *input;
-    QTextEdit *y;
-    QTextEdit *x;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -53,21 +47,6 @@ public:
         next = new QPushButton(centralWidget);
         next->setObjectName(QString::fromUtf8("next"));
         next->setGeometry(QRect(610, 190, 89, 25));
-        label_9 = new QLabel(centralWidget);
-        label_9->setObjectName(QString::fromUtf8("label_9"));
-        label_9->setGeometry(QRect(570, 40, 21, 31));
-        label_10 = new QLabel(centralWidget);
-        label_10->setObjectName(QString::fromUtf8("label_10"));
-        label_10->setGeometry(QRect(650, 40, 21, 31));
-        input = new QPushButton(centralWidget);
-        input->setObjectName(QString::fromUtf8("input"));
-        input->setGeometry(QRect(610, 80, 101, 25));
-        y = new QTextEdit(centralWidget);
-        y->setObjectName(QString::fromUtf8("y"));
-        y->setGeometry(QRect(680, 40, 41, 31));
-        x = new QTextEdit(centralWidget);
-        x->setObjectName(QString::fromUtf8("x"));
-        x->setGeometry(QRect(600, 40, 41, 31));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -90,9 +69,6 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
         window->setText(QString());
         next->setText(QApplication::translate("MainWindow", "Next Curve", 0, QApplication::UnicodeUTF8));
-        label_9->setText(QApplication::translate("MainWindow", "x :", 0, QApplication::UnicodeUTF8));
-        label_10->setText(QApplication::translate("MainWindow", "y : ", 0, QApplication::UnicodeUTF8));
-        input->setText(QApplication::translate("MainWindow", "Input Vertex", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
