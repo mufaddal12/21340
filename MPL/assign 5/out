@@ -1,0 +1,35 @@
+nasm -f elf64 a5-main.asm 
+nasm -f elf64 a5-methods.asm 
+ld a5-main.o a5-methods.o
+./a.out
+
+1. No. of blank spaces
+2. No. of lines
+3. No. of a character
+0. Exit
+  Option : 1
+
+No. Of spaces : 09
+
+./a.out
+
+1. No. of blank spaces
+2. No. of lines
+3. No. of a character
+0. Exit
+  Option : 2
+
+No. Of lines : 03
+
+./a.out
+
+1. No. of blank spaces
+2. No. of lines
+3. No. of a character
+0. Exit
+  Option : 3
+
+Character : l
+
+No. of times character appears : 04
+

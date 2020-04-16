@@ -63,6 +63,7 @@ case1:
 	call asciitohex
 	mov [hexaval], ax
 	call hextobcd
+	print nl, 1
 	exit
 	
 case2:
@@ -74,6 +75,7 @@ case2:
 	mov rsi, number
 	call hextoascii
 	print number, 4
+	print nl, 1
 
 case3:	
 	exit

@@ -1,0 +1,18 @@
+./a.out
+
+1. HEX to BCD
+2. BCD to HEX
+0. Exit
+ Select an option : 1
+FFFF
+65535
+
+./a.out
+
+1. HEX to BCD
+2. BCD to HEX
+0. Exit
+ Select an option : 2
+65535
+FFFF
+

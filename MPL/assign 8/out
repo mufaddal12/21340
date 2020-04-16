@@ -1,0 +1,10 @@
+./a.out Type a8d.txt
+File Opened Successfully
+This is text file
+This is assignment 8
+this is last line
+
+./a.out Copy a8d.txt a8n.txt
+
+./a.out Delete a8n.txt
+

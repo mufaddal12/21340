@@ -1,0 +1,54 @@
+./a.out
+
+Initial array :
+00000000006005B9 : 10 
+00000000006005BA : 20 
+00000000006005BB : 30 
+00000000006005BC : 40 
+00000000006005BD : 50 
+
+MENU
+1. Non-Overlapping (Without String Instructions)
+2. Overlapping (Without String Instructions)
+3. Non-Overlapping (With String Instructions)
+4. Overlapping (With String Instructions)
+5. Exit
+
+Enter your choice: 1
+
+Non-Overlapping array :
+00000000006005BE : 10 
+00000000006005BF : 20 
+00000000006005C0 : 30 
+00000000006005C1 : 40 
+00000000006005C2 : 50 
+
+./a.out
+
+Initial array :
+00000000006005B9 : 10 
+00000000006005BA : 20 
+00000000006005BB : 30 
+00000000006005BC : 40 
+00000000006005BD : 50 
+
+MENU
+1. Non-Overlapping (Without String Instructions)
+2. Overlapping (Without String Instructions)
+3. Non-Overlapping (With String Instructions)
+4. Overlapping (With String Instructions)
+5. Exit
+
+Enter your choice: 4
+
+Enter Offset: 3
+
+Overlapping array (with string instructions):
+00000000006005B9 : 10 
+00000000006005BA : 20 
+00000000006005BB : 30 
+00000000006005BC : 10 
+00000000006005BD : 20 
+00000000006005BE : 30 
+00000000006005BF : 40 
+00000000006005C0 : 50

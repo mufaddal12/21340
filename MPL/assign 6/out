@@ -1,0 +1,9 @@
+./a.out
+---- In Protected Mode. ----
+
+Contents of GDTR : 00135000007F
+Contents of LDTR : 0000
+Contents of IDTR : 000000040FFF
+Contents of TR : 0040
+Contents of MSW : 0000
+

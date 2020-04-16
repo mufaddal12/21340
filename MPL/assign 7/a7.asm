@@ -77,7 +77,6 @@ _start:
 
 	openFile fname
 	mov [fd], rax
-	mov [fd_in], rax
 	bt rax, 63
 	jc fileerror
 

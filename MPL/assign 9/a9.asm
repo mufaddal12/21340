@@ -12,6 +12,10 @@
 	syscall
 %endmacro
 
+section .data
+	
+	nl: db 0xA
+
 section .bss
 
 	input: resb 3
@@ -43,6 +47,7 @@ _start:
 	call hextoascii
 
 	print result, 8
+	print nl, 1
 	exit
 	
 asciitohex:
