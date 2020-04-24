@@ -1,0 +1,282 @@
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 1
+
+Key   : hh
+Value : 8
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 1
+
+Key   : ff
+Value : 6
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 1
+
+Key   : aa
+Value : 1
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 1
+
+Key   : bb
+Value : 2
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 1
+
+Key   : ee
+Value : 5
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 1
+
+Key   : cc
+Value : 3
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 1
+
+Key   : gg
+Value : 7
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 1
+
+Key   : dd
+Value : 4
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 6
+
+  1. Dictionary 1
+  2. Dictionary 2
+   Option : 1
+
+    1. Ascending Order
+    2. Descending Order
+     Option : 1
+
+"aa" : 1
+"bb" : 2
+"cc" : 3
+"dd" : 4
+"ee" : 5
+"ff" : 6
+"gg" : 7
+"hh" : 8
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 6
+
+  1. Dictionary 1
+  2. Dictionary 2
+   Option : 2
+
+    1. Ascending Order
+    2. Descending Order
+     Option : 1
+
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 2
+
+Key   : dd
+key "dd" Deleted
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 6
+
+  1. Dictionary 1
+  2. Dictionary 2
+   Option : 1
+
+    1. Ascending Order
+    2. Descending Order
+     Option : 1
+
+"aa" : 1
+"bb" : 2
+"cc" : 3
+"ee" : 5
+"ff" : 6
+"gg" : 7
+"hh" : 8
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 3
+
+Key   : cc
+Value : 4
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 6
+
+  1. Dictionary 1
+  2. Dictionary 2
+   Option : 1
+
+    1. Ascending Order
+    2. Descending Order
+     Option : 1
+
+"aa" : 1
+"bb" : 2
+"cc" : 4
+"ee" : 5
+"ff" : 6
+"gg" : 7
+"hh" : 8
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 4
+
+Enter key :cc
+Key 'cc' found in 6 comparisons
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 2
+
+Key   : cc
+key "cc" Deleted
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 5
+
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 6
+
+  1. Dictionary 1
+  2. Dictionary 2
+   Option : 2
+
+    1. Ascending Order
+    2. Descending Order
+     Option : 1
+
+"aa" : 1
+"bb" : 2
+"ee" : 5
+"ff" : 6
+"gg" : 7
+"hh" : 8
+
+1. Insert Data
+2. Delete Data
+3. Update Data
+4. Search a key
+5. Equate 2 trees
+6. Display
+0. Exit
+ Option : 0
+
+

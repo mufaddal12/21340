@@ -228,7 +228,7 @@ int main()
     {
         cout << "1. Insert\n";
         cout << "2. Remove\n";
-        cout << "3. check if element is available\n";
+        cout << "3. Check if element is available\n";
         cout << "4. Display\n";
         cout << "0. Exit\n";
         cout << "  Option : ";

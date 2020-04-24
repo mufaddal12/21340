@@ -1,0 +1,159 @@
+1. Create Tree
+2. Recursive Traverse
+3. Non-Recursive Traverse
+4. Display Types of nodes
+5. Clear Tree
+6. Tree1 = Tree2
+7. Compare Trees
+0. Exit
+ Option : 1
+
+Data : 1
+Add left child to 1? y
+Data : 2
+Add left child to 2? y
+Data : 4
+Add left child to 4? n
+Add right child to 4? n
+Add right child to 2? y
+Data : 5
+Add left child to 5? y
+Data : 7
+Add left child to 7? n
+Add right child to 7? n
+Add right child to 5? y
+Data : 8
+Add left child to 8? n
+Add right child to 8? n
+Add right child to 1? y
+Data : 3
+Add left child to 3? y
+Data : 6
+Add left child to 6? n
+Add right child to 6? y
+Data : 9
+Add left child to 9? n
+Add right child to 9? n
+Add right child to 3? n
+
+1. Create Tree
+2. Recursive Traverse
+3. Non-Recursive Traverse
+4. Display Types of nodes
+5. Clear Tree
+6. Tree1 = Tree2
+7. Compare Trees
+0. Exit
+ Option : 2
+
+  1. Tree 1
+  2. Tree 2
+   Option : 1
+
+    1. Pre-Order Traversal
+    2. In-Order Traversal
+    3. Post-Order Traversal
+     Option : 1
+
+1 - 2 - 4 - 5 - 7 - 8 - 3 - 6 - 9 - 
+
+
+1. Create Tree
+2. Recursive Traverse
+3. Non-Recursive Traverse
+4. Display Types of nodes
+5. Clear Tree
+6. Tree1 = Tree2
+7. Compare Trees
+0. Exit
+ Option : 2
+
+  1. Tree 1
+  2. Tree 2
+   Option : 1
+
+    1. Pre-Order Traversal
+    2. In-Order Traversal
+    3. Post-Order Traversal
+     Option : 2
+
+4 - 2 - 7 - 5 - 8 - 1 - 6 - 9 - 3 - 
+
+
+1. Create Tree
+2. Recursive Traverse
+3. Non-Recursive Traverse
+4. Display Types of nodes
+5. Clear Tree
+6. Tree1 = Tree2
+7. Compare Trees
+0. Exit
+ Option : 4
+
+  1. Tree 1
+  2. Tree 2
+   Option : 1
+
+    1. Leaves
+    2. Internal nodes
+     Option : 1
+
+
+4 - 7 - 8 - 9 - 
+
+1. Create Tree
+2. Recursive Traverse
+3. Non-Recursive Traverse
+4. Display Types of nodes
+5. Clear Tree
+6. Tree1 = Tree2
+7. Compare Trees
+0. Exit
+ Option : 6
+
+
+1. Create Tree
+2. Recursive Traverse
+3. Non-Recursive Traverse
+4. Display Types of nodes
+5. Clear Tree
+6. Tree1 = Tree2
+7. Compare Trees
+0. Exit
+ Option : 2
+
+  1. Tree 1
+  2. Tree 2
+   Option : 2
+
+    1. Pre-Order Traversal
+    2. In-Order Traversal
+    3. Post-Order Traversal
+     Option : 2
+
+4 - 2 - 7 - 5 - 8 - 1 - 6 - 9 - 3 - 
+
+
+1. Create Tree
+2. Recursive Traverse
+3. Non-Recursive Traverse
+4. Display Types of nodes
+5. Clear Tree
+6. Tree1 = Tree2
+7. Compare Trees
+0. Exit
+ Option : 7
+
+Trees are equal
+
+1. Create Tree
+2. Recursive Traverse
+3. Non-Recursive Traverse
+4. Display Types of nodes
+5. Clear Tree
+6. Tree1 = Tree2
+7. Compare Trees
+0. Exit
+ Option : 0
+
+

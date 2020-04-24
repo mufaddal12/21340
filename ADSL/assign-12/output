@@ -1,0 +1,56 @@
+-------------For Integer-----------
+
+1.Push the element 
+2.Pop the element 
+3.Display element at top 
+4.Exit 
+ Enter your choice-:1
+25
+
+1.Push the element 
+2.Pop the element 
+3.Display element at top 
+4.Exit 
+ Enter your choice-:1
+56
+
+1.Push the element 
+2.Pop the element 
+3.Display element at top 
+4.Exit 
+ Enter your choice-:3
+'56'
+ is Data at top!!
+1.Push the element 
+2.Pop the element 
+3.Display element at top 
+4.Exit 
+ Enter your choice-:1
+65
+
+1.Push the element 
+2.Pop the element 
+3.Display element at top 
+4.Exit 
+ Enter your choice-:3
+'65'
+ is Data at top!!
+1.Push the element 
+2.Pop the element 
+3.Display element at top 
+4.Exit 
+ Enter your choice-:2
+ '65' is popped data!!
+1.Push the element 
+2.Pop the element 
+3.Display element at top 
+4.Exit 
+ Enter your choice-:3
+'56'
+ is Data at top!!
+1.Push the element 
+2.Pop the element 
+3.Display element at top 
+4.Exit 
+ Enter your choice-:4
+

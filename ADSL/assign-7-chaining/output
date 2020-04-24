@@ -1,0 +1,466 @@
+1. Hashing With Replacement
+2. Hashing without replacement
+  Option : 1
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : aa
+Value : 11
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : ff
+Value : 66
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : rr
+Value : 22
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 5
+
+  Index Char  Key  Value  Next
+      0    a   aa     11    -1
+      1    b           0    -1
+      2    c           0    -1
+      3    d           0    -1
+      4    e           0    -1
+      5    f   ff     66    -1
+      6    g           0    -1
+      7    h           0    -1
+      8    i           0    -1
+      9    j           0    -1
+     10    k           0    -1
+     11    l           0    -1
+     12    m           0    -1
+     13    n           0    -1
+     14    o           0    -1
+     15    p           0    -1
+     16    q           0    -1
+     17    r   rr     22    -1
+     18    s           0    -1
+     19    t           0    -1
+     20    u           0    -1
+     21    v           0    -1
+     22    w           0    -1
+     23    x           0    -1
+     24    y           0    -1
+     25    z           0    -1
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : bb
+Value : 22
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 5
+
+  Index Char  Key  Value  Next
+      0    a   aa     11    -1
+      1    b   bb     22    -1
+      2    c           0    -1
+      3    d           0    -1
+      4    e           0    -1
+      5    f   ff     66    -1
+      6    g           0    -1
+      7    h           0    -1
+      8    i           0    -1
+      9    j           0    -1
+     10    k           0    -1
+     11    l           0    -1
+     12    m           0    -1
+     13    n           0    -1
+     14    o           0    -1
+     15    p           0    -1
+     16    q           0    -1
+     17    r   rr     22    -1
+     18    s           0    -1
+     19    t           0    -1
+     20    u           0    -1
+     21    v           0    -1
+     22    w           0    -1
+     23    x           0    -1
+     24    y           0    -1
+     25    z           0    -1
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : ad
+Value : 31
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 5
+
+  Index Char  Key  Value  Next
+      0    a   aa     11     2
+      1    b   bb     22    -1
+      2    c   ad     31    -1
+      3    d           0    -1
+      4    e           0    -1
+      5    f   ff     66    -1
+      6    g           0    -1
+      7    h           0    -1
+      8    i           0    -1
+      9    j           0    -1
+     10    k           0    -1
+     11    l           0    -1
+     12    m           0    -1
+     13    n           0    -1
+     14    o           0    -1
+     15    p           0    -1
+     16    q           0    -1
+     17    r   rr     22    -1
+     18    s           0    -1
+     19    t           0    -1
+     20    u           0    -1
+     21    v           0    -1
+     22    w           0    -1
+     23    x           0    -1
+     24    y           0    -1
+     25    z           0    -1
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : cc
+Value : 56
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 5
+
+  Index Char  Key  Value  Next
+      0    a   aa     11     3
+      1    b   bb     22    -1
+      2    c   cc     56    -1
+      3    d   ad     31    -1
+      4    e           0    -1
+      5    f   ff     66    -1
+      6    g           0    -1
+      7    h           0    -1
+      8    i           0    -1
+      9    j           0    -1
+     10    k           0    -1
+     11    l           0    -1
+     12    m           0    -1
+     13    n           0    -1
+     14    o           0    -1
+     15    p           0    -1
+     16    q           0    -1
+     17    r   rr     22    -1
+     18    s           0    -1
+     19    t           0    -1
+     20    u           0    -1
+     21    v           0    -1
+     22    w           0    -1
+     23    x           0    -1
+     24    y           0    -1
+     25    z           0    -1
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : ee
+Value : 33
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 5
+
+  Index Char  Key  Value  Next
+      0    a   aa     11     3
+      1    b   bb     22    -1
+      2    c   cc     56    -1
+      3    d   ad     31    -1
+      4    e   ee     33    -1
+      5    f   ff     66    -1
+      6    g           0    -1
+      7    h           0    -1
+      8    i           0    -1
+      9    j           0    -1
+     10    k           0    -1
+     11    l           0    -1
+     12    m           0    -1
+     13    n           0    -1
+     14    o           0    -1
+     15    p           0    -1
+     16    q           0    -1
+     17    r   rr     22    -1
+     18    s           0    -1
+     19    t           0    -1
+     20    u           0    -1
+     21    v           0    -1
+     22    w           0    -1
+     23    x           0    -1
+     24    y           0    -1
+     25    z           0    -1
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : dd
+Value : 44
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 5
+
+  Index Char  Key  Value  Next
+      0    a   aa     11     6
+      1    b   bb     22    -1
+      2    c   cc     56    -1
+      3    d   dd     44    -1
+      4    e   ee     33    -1
+      5    f   ff     66    -1
+      6    g   ad     31    -1
+      7    h           0    -1
+      8    i           0    -1
+      9    j           0    -1
+     10    k           0    -1
+     11    l           0    -1
+     12    m           0    -1
+     13    n           0    -1
+     14    o           0    -1
+     15    p           0    -1
+     16    q           0    -1
+     17    r   rr     22    -1
+     18    s           0    -1
+     19    t           0    -1
+     20    u           0    -1
+     21    v           0    -1
+     22    w           0    -1
+     23    x           0    -1
+     24    y           0    -1
+     25    z           0    -1
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : af
+Value : 11
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 5
+
+  Index Char  Key  Value  Next
+      0    a   aa     11     6
+      1    b   bb     22    -1
+      2    c   cc     56    -1
+      3    d   dd     44    -1
+      4    e   ee     33    -1
+      5    f   ff     66    -1
+      6    g   ad     31     7
+      7    h   af     11    -1
+      8    i           0    -1
+      9    j           0    -1
+     10    k           0    -1
+     11    l           0    -1
+     12    m           0    -1
+     13    n           0    -1
+     14    o           0    -1
+     15    p           0    -1
+     16    q           0    -1
+     17    r   rr     22    -1
+     18    s           0    -1
+     19    t           0    -1
+     20    u           0    -1
+     21    v           0    -1
+     22    w           0    -1
+     23    x           0    -1
+     24    y           0    -1
+     25    z           0    -1
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : de
+Value : 11
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 5
+
+  Index Char  Key  Value  Next
+      0    a   aa     11     6
+      1    b   bb     22    -1
+      2    c   cc     56    -1
+      3    d   dd     44     8
+      4    e   ee     33    -1
+      5    f   ff     66    -1
+      6    g   ad     31     7
+      7    h   af     11    -1
+      8    i   de     11    -1
+      9    j           0    -1
+     10    k           0    -1
+     11    l           0    -1
+     12    m           0    -1
+     13    n           0    -1
+     14    o           0    -1
+     15    p           0    -1
+     16    q           0    -1
+     17    r   rr     22    -1
+     18    s           0    -1
+     19    t           0    -1
+     20    u           0    -1
+     21    v           0    -1
+     22    w           0    -1
+     23    x           0    -1
+     24    y           0    -1
+     25    z           0    -1
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 1
+
+Key   : hh 
+Value : 22
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 5
+
+  Index Char  Key  Value  Next
+      0    a   aa     11     6
+      1    b   bb     22    -1
+      2    c   cc     56    -1
+      3    d   dd     44     8
+      4    e   ee     33    -1
+      5    f   ff     66    -1
+      6    g   ad     31     9
+      7    h   hh     22    -1
+      8    i   de     11    -1
+      9    j   af     11    -1
+     10    k           0    -1
+     11    l           0    -1
+     12    m           0    -1
+     13    n           0    -1
+     14    o           0    -1
+     15    p           0    -1
+     16    q           0    -1
+     17    r   rr     22    -1
+     18    s           0    -1
+     19    t           0    -1
+     20    u           0    -1
+     21    v           0    -1
+     22    w           0    -1
+     23    x           0    -1
+     24    y           0    -1
+     25    z           0    -1
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+  Option : 4
+
+Average search cost is 1.36364
+
+1. Insert
+2. Find
+3. Delete
+4. Average cost
+5. Display Hash Table
+0. Exit
+
