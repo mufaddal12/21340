@@ -1,887 +1,630 @@
-
 #include <iostream>
+#include <math.h>
+#include <map>
 #include <vector>
-#include <string>
-#include <string.h>
-#include <stdio.h>
 #include <chrono>
-#include <stdlib.h>
-#include <time.h>
-
-#define maxD 3
+using namespace std;
+using namespace std::chrono;
+#define white 0
+#define black 1
+#define invalid 1000
 #define infinity 1000000
 
-using namespace std::chrono;
-using namespace std;
+class bot;
+void playAgainstBot(bot b);
+void play();
 
-string Players[2][11] = {
-    {"A4", "A5", "A6", "A7", "B3", "B4", "B5", "B6", "B7", "C4", "C5"}, //blue
-    {"G1", "G2", "G3", "G4", "F1", "F2", "F3", "F4", "F5", "E3", "E4"}  //red
+struct Marble
+{
+    int player;
+    int grouping;
+    float centralDistance;
+    Marble(int p = 0, int g = 0, float cD = 0)
+    {
+        player = p;
+        grouping = g;
+        centralDistance = cD;
+    }
 };
 
-int Marbles[] = {11, 11};
+typedef map<string, Marble> MarbleList;
 
-string directions[6] = {"EE", "NE", "NW", "SE", "SW", "WW"};
-
-class validation;
-class bot;
-
-void display();
-void actualMove(validation, string, bool);
-void play(bool);
-
-class validation
+class Board
 {
-    bool myColor;
-    string players[2][11];
-    int marbles[2];
+	friend class bot;
+	friend void playAgainstBot(bot b);
+	friend void play();
+
+    // data members
+    MarbleList marbles;
+    int count[2];
+    string limits[7][2];
+    int active;
 
 public:
-    validation(bool pl = false)
-    {
-        for (int i = 0; i < 2; i++)
-        {
-            for (int j = 0; j < 11; j++)
-                players[i][j] = Players[i][j];
-            marbles[i] = Marbles[i];
-        }
-        myColor = pl;
-    }
 
-    bool isValid(string);
-    bool isStringValid(string);
-    bool inBoard(string);
-    bool cornerPush(string, string);
-    bool isPlayers(string, int);
-    void move(string);
-    int isWin();
-    string getDirection(string, string);
-    string getNext(string, string);
-    vector<int> convertDir(string);
-    vector<string> getNeighbours(string, int);
-    vector<string> getMoves();
-
-    friend class bot;
+    // member functions
+    Board(int a);
+    void display();
+    bool validate(string move);
+    string getDirection(string rdi, string rdf);
+	bool inLimit(string rd);
+	void move(string m);
+	float calcCenterDistance(string pos);
+	int calcGrouping(string pos);
+	string getNeighbour(string pos, string dir);
+	int winner();
+	int getactive() { return active; }
 };
+
+Board::Board(int a = white)
+{
+    active = a;
+	count[white] = count[black] = 11;
+
+    marbles["A4"] = {white};marbles["A5"] = {white};marbles["A6"] = {white};marbles["A7"] = {white};
+    marbles["B3"] = {white};marbles["B4"] = {white};marbles["B5"] = {white};marbles["B6"] = {white};marbles["B7"] = {white};
+    marbles["C4"] = {white};marbles["C5"] = {white};
+
+    marbles["E3"] = {black};marbles["E4"] = {black};  
+    marbles["F1"] = {black};marbles["F2"] = {black};marbles["F3"] = {black};marbles["F4"] = {black};marbles["F5"] = {black};
+    marbles["G1"] = {black};marbles["G2"] = {black};marbles["G3"] = {black};marbles["G4"] = {black};
+
+    limits[0][0] = "A4";    limits[0][1] = "A7";
+    limits[1][0] = "B3";    limits[1][1] = "B7";
+    limits[2][0] = "C2";    limits[2][1] = "C7";
+    limits[3][0] = "D1";    limits[3][1] = "D7";
+    limits[4][0] = "E1";    limits[4][1] = "E6";
+    limits[5][0] = "F1";    limits[5][1] = "F5";
+    limits[6][0] = "G1";    limits[6][1] = "G4";
+}
+
+void Board::display()
+{
+    char row = 'A';
+	int dia = 7;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 2 - i; j >= 0; j--)
+		{
+			cout << " ";
+		}
+		cout << row << ". ";
+		for (string j = limits[i][0]; j <= limits[i][1]; j[1]++)
+		{
+			if(marbles.count(j)) (marbles[j].player == black)?cout << "B ": cout << "W ";
+            else cout << "_ ";
+		}
+		cout << endl;
+		row++;
+	}
+	for (int i = 4; i < 7; i++)
+	{
+		for (int j = 0; j < i - 3; j++)
+		{
+			cout << " ";
+		}
+		cout << row << ". ";
+		for (string j = limits[i][0]; j <= limits[i][1]; j[1]++)
+		{
+			if(marbles.count(j)) (marbles[j].player == black)?cout << "B ": cout << "W ";
+            else cout << "_ ";
+		}
+		cout << dia << endl;
+		row++;
+		dia--;
+	}
+	cout << "       1 2 3 4" << endl<<endl;
+}
+
+string Board::getDirection(string rdi, string rdf)
+{
+	if (rdi[0] == rdf[0]) // along same row
+	{
+		if (rdi[1] < rdf[1]) return "EE"; // going east
+		else return "WW"; // going west
+	}
+	else if (rdi[1] == rdf[1]) // along same diagonal
+	{
+		if (rdi[0] < rdf[0]) return "SE";
+		else return "NW";
+	}
+	else // along NE direction
+	{
+		if (rdi[0] < rdf[0]) return "SW";
+		else return "NE";
+	}
+}
+
+bool Board::inLimit(string rd)
+{
+	int i = rd[0] - 65;
+	if(i < 0 || i > 6) return false;
+	if(rd >= limits[i][0] && rd <= limits[i][1]) return true;
+	return false;
+}
+
+bool Board::validate(string move)
+{
+    string m1 = move.substr(0, 2);
+    string m2 = move.substr(3, 2);
+    string dir = getDirection(m1, m2);
+	int deltaX = 0, deltaY = 0;
+	/*
+		deltaX and deltaY will indicate what to add to the current position
+		for west, decrease col; for east increase col....
+	*/
+	if (dir == "WW") { deltaX = 0;	deltaY = -1; }
+	else if (dir == "EE") { deltaX = 0;	deltaY = 1; }
+	else if (dir == "NW") { deltaX = -1;	deltaY = 0; }
+	else if (dir == "SE") { deltaX = 1;	deltaY = 0; }
+	else if (dir == "NE") { deltaX = -1;	deltaY = 1; }
+	else if (dir == "SW") { deltaX = 1;	deltaY = -1; }
+
+    string x = m1;
+    x[0] += deltaX; x[1] += deltaY;
+
+	// more than two selected
+    if(m2 != x) return false;
+
+	// if blank space selected
+	if(marbles.count(m1) == 0 || marbles.count(m2) == 0) return false;
+
+	// opponent is selected or two different marbles are selected
+	if(marbles[m1].player != marbles[m2].player || marbles[m1].player == !active) return false;
+
+    string m3 = m2, m4 = m2;
+    m3[0] += deltaX;    m3[1] += deltaY;
+    m4[0] += 2*deltaX;  m4[1] += 2*deltaY;
+
+	// if new position is not in board
+	if(!inLimit(m3)) return false;
+
+	// if three in a row
+	if(marbles.count(m3))
+	{
+		if(marbles[m3].player == active || marbles.count(m4)) return false;
+	}
+
+	// corner push check
+	if((m3 == "A4" && dir == "NW") || (m3 == "A7" && dir == "NE") || (m3 == "D1" && dir == "WW") || (m3 == "D7" && dir == "EE") || (m3 == "G1" && dir == "SW") || (m3 == "G4" && dir == "SE")) return false;
+
+	return true;
+}
+
+void Board::move(string m)
+{
+	string m1 = m.substr(0, 2), m2 = m.substr(3, 2);
+	int deltaX = m2[0] - m1[0], deltaY = m2[1] - m1[1];
+	string m3 = m2, m4 = m2;
+	m3[0] += deltaX;	m3[1] += deltaY;
+	m4[0] += 2*deltaX;	m4[1] += 2*deltaY;
+
+	
+	// marble is being pushed
+	if(marbles.count(m3))
+	{
+		if(!inLimit(m4)) // if marble is being KOed
+		{
+			marbles[m3].player = active;
+			count[!active]--;
+		}
+		else marbles[m4] = {!active};
+		marbles[m3].player = active;
+		marbles[m2].player = active;
+	}
+	// marbles are being moved
+	else
+	{
+		marbles[m3].player = {active};
+	}
+	marbles.erase(m1);
+
+	active = !active;
+}
+
+float Board::calcCenterDistance(string pos)
+{
+	return sqrt((pos[0]-'D')*(pos[0]-'D') + (pos[1]-'4')*(pos[1]-'4'));
+}
+
+int Board::calcGrouping(string pos)
+{
+	int grouping = 0;
+	string neighbours[6] = {pos, pos, pos, pos, pos, pos};
+	neighbours[0][1]++;
+	neighbours[1][1]--;
+	neighbours[2][0]--; neighbours[2][1]++; 
+	neighbours[3][0]++; neighbours[3][1]--; 
+	neighbours[4][0]++;
+	neighbours[5][0]--;
+	for(int i = 0; i < 6; i++)
+	{
+		if(marbles.count(neighbours[i]) && marbles[neighbours[i]].player == marbles[pos].player)
+			grouping++;
+	}
+	return grouping;
+}
+
+string Board::getNeighbour(string pos, string dir)
+{
+	if(dir == "EE")
+	{
+		pos[1]++;
+	}
+	else if(dir == "WW")
+	{
+		pos[1]--;
+	}
+	else if(dir == "NE")
+	{
+		pos[0]--;	pos[1]++;
+	}
+	else if(dir == "SW")
+	{
+		pos[0]++;	pos[1]--;
+	}
+	else if(dir == "SE")
+	{
+		pos[0]++;
+	}
+	else if(dir == "NW")
+	{
+		pos[0]--;
+	}
+	return pos;
+}
+
+int Board::winner()
+{
+	if(count[white] == 7) return black;
+	else if(count[black] == 7) return white;
+	else return -1;
+}
 
 class bot
 {
-    bool botPlayer;
-    validation comp;
+	friend void playAgainstBot(bot b);
+	friend void play();
 
+	Board comp;
+	int botPlayer;
+	int maxDepth;
 public:
-    bot(bool pl, validation v)
-    {
-        botPlayer = pl;
-        comp = v;
-    }
-    string findBestMove();
-    int clusterValue(vector<string>);
-    int centreDist(string);
-    int eval();
-    int mod(string);
-    int edgeValues(bool);
-    int miniMax(bool, int, int, int);
+	bot(Board c, int mD, int bP);
+	int evaluate();
+	vector<int> minimax(int depth, bool isMax, int alpha, int beta);
+	string botMove();
+	void set(Board b);
+	vector<string> getMarbles(int color);
+	int getplayer() { return botPlayer; }
 };
 
-//---------------------validation class functions--------------------------
-
-bool validation::isStringValid(string mov)
+bot::bot(Board c, int mD, int bP)
 {
-    if (mov.length() != 5)
-        return false;
-    if (mov[0] >= 'A' && mov[0] <= 'G' && mov[3] >= 'A' && mov[3] <= 'G')
-        if (mov[1] >= '1' && mov[1] <= '7' && mov[4] >= '1' && mov[4] <= '7')
-            return true;
-        else
-            return false;
-    else
-        return false;
+	comp = c;
+	maxDepth = mD;
+	botPlayer = bP;
 }
 
-bool validation::isPlayers(string mar, int pl)
+void bot::set(Board b)
 {
-    for (int i = 0; i < 11; i++)
-        if (mar == players[pl][i])
-            return true;
-    return false;
+	comp.marbles = b.marbles;
+	comp.count[white] = b.count[white];
+	comp.count[black] = b.count[black];
+	comp.active = b.active;
 }
 
-bool validation::inBoard(string pos)
+int bot::evaluate()
 {
-    if (pos[0] >= 'A' and pos[0] <= 'D')
-    {
-        if (pos[1] <= '7' and pos[1] >= '0' + ('D' - pos[0] + 1))
-            return true;
-        else
-            return false;
-    }
-    else if (pos[0] > 'D' and pos[0] <= 'G')
-    {
-        if (pos[1] >= '1' and pos[1] <= '0' + 'G' - pos[0] + 4)
-            return true;
-        else
-            return false;
-    }
-    else
-        return false;
+	if(comp.winner() == botPlayer)
+	{
+		return infinity;
+	}
+	else if(comp.winner() == !botPlayer)
+	{
+		return -infinity;
+	}
+	
+	int value = 0;
+
+	// +1000 for each marble bot has extra, -1000 for each marble player has extra
+	int centerDistance = 0, grouping = 0, profit;
+	profit = comp.count[botPlayer] - comp.count[!botPlayer];
+	value += profit * 1000;
+	// value += profit * 2000;
+	for(MarbleList::iterator it = comp.marbles.begin(); it != comp.marbles.end(); it++)
+	{
+		if(it->second.player == botPlayer)
+		{
+			centerDistance += it->second.centralDistance;
+			grouping += comp.calcGrouping(it->first);
+		}
+	}
+
+	if(centerDistance < 18) value += 400;
+	else if(centerDistance < 23) value += 300;
+	else if(centerDistance < 27) value += 200;
+	else if(centerDistance < 32) value += 100;
+
+	if(grouping > 35) value += 320;
+	else if(grouping > 30) value += 240;
+	else if(grouping > 25) value += 160;
+	else if(grouping > 20) value += 80;
+
+	/*if(grouping > 32) value += 420;
+	else if(grouping > 27) value += 340;
+	else if(grouping > 22) value += 250;
+	else if(grouping > 19) value += 150;*/
+
+	return value;
+	
 }
 
-bool validation::cornerPush(string pos, string Dir)
+vector<string> bot::getMarbles(int color)
 {
-    if (pos == "A7" and Dir == "NE")
-        return true;
-    else if (pos == "D7" and Dir == "EE")
-        return true;
-    else if (pos == "G4" and Dir == "SE")
-        return true;
-    else if (pos == "G1" and Dir == "SW")
-        return true;
-    else if (pos == "D1" and Dir == "WW")
-        return true;
-    else if (pos == "A4" and Dir == "NW")
-        return true;
-    else
-        return false;
+	vector<string> allMarbles;
+	for(map<string, Marble>::iterator it = comp.marbles.begin(); it != comp.marbles.end(); it++)
+	{
+		if(it->second.player == color) allMarbles.push_back(it->first);
+	}
+	return allMarbles;
 }
 
-string validation::getDirection(string ini, string fin)
+vector<int> bot::minimax(int depth, bool isMax, int alpha, int beta)
 {
-    vector<int> vals;
-    int deltax, deltay;
-    deltax = int(fin[0] - ini[0]);
-    deltay = int(fin[1] - ini[1]);
-    if (deltax == -1)
-    {
-        if (deltay == 1)
-            return "NE";
-        if (deltay == 0)
-            return "NW";
-    }
-    if (deltax == 0)
-    {
-        if (deltay == 1)
-            return "EE";
-        if (deltay == -1)
-            return "WW";
-    }
-    if (deltax == 1)
-    {
-        if (deltay == 0)
-            return "SE";
-        if (deltay == -1)
-            return "SW";
-    }
-    return "";
+	int value = evaluate();
+
+	if(value == infinity || value == -infinity || depth == maxDepth) return {value, depth};
+
+	vector<string> marbleList = getMarbles((isMax)?botPlayer:!botPlayer);
+	
+	if(isMax) // maximizer's move
+	{
+		int maxVal = -infinity;
+		int leastDepth = 100;
+
+		for(int i = 0; i < marbleList.size(); i++)
+		{
+			
+			
+			string marblePos = marbleList[i];
+			string dirs[] = {"EE", "WW", "NW", "SE", "SW", "NE"};
+			for(int i = 0; i < 6; i++)
+			{
+				string neighbour = comp.getNeighbour(marblePos, dirs[i]);
+
+				string tempMove = marblePos + " " + neighbour;
+				if(comp.validate(tempMove))
+				{
+					MarbleList temp = comp.marbles;
+					int whites = comp.count[white], blacks = comp.count[black];
+
+					comp.move(tempMove);
+
+					vector<int> val = minimax(depth+1, false, alpha, beta);
+
+					if(val[0] > maxVal)
+					{
+						maxVal = val[0];
+						leastDepth = val[1];
+					}
+					else  if(val[0] >= maxVal && val[1] < depth)
+					{
+						maxVal = val[0];
+						leastDepth = val[1];
+					}
+					else if(val[0] == maxVal && val[1] == depth)
+					{
+						int x = rand() % 2;
+						if(x)
+						{
+							maxVal = val[0];
+							leastDepth = val[1];
+						}
+					}
+
+					// undo
+					comp.marbles = temp;
+					comp.count[white] = whites;
+					comp.count[black] = blacks;
+					comp.active = !comp.active;
+
+					// alpha-beta pruning
+					alpha = max(alpha, maxVal);
+					if(beta <= alpha) break;
+				}
+			}
+			
+		}
+		return {maxVal, leastDepth};
+	}
+	else // minimizer's move
+	{
+		int minVal = infinity;
+		int leastDepth = 100;
+
+		for(int i = 0; i < marbleList.size(); i++)
+		{
+			
+			string marblePos = marbleList[i];
+			string dirs[] = {"EE", "WW", "NW", "SE", "SW", "NE"};
+			for(int i = 0; i < 6; i++)
+			{
+				string neighbour = comp.getNeighbour(marblePos, dirs[i]);
+
+				string tempMove = marblePos + " " + neighbour;
+				if(comp.validate(tempMove))
+				{
+					MarbleList temp = comp.marbles;
+					int whites = comp.count[white], blacks = comp.count[black];
+
+					comp.move(tempMove);
+
+					vector<int> val = minimax(depth+1, true, alpha, beta);
+
+					if(val[0] < minVal)
+					{
+						minVal = val[0];
+						leastDepth = val[1];
+					}
+					else  if(val[0] <= minVal && val[1] < depth)
+					{
+						minVal = val[0];
+						leastDepth = val[1];
+					}
+					else if(val[0] == minVal && val[1] == depth)
+					{
+						int x = rand() % 2;
+						if(x)
+						{
+							minVal = val[0];
+							leastDepth = val[1];
+						}
+					}
+
+					// undo
+					comp.marbles = temp;
+					comp.count[white] = whites;
+					comp.count[black] = blacks;
+					comp.active = !comp.active;
+
+					// alpha-beta pruning
+					beta = min(beta, minVal);
+					if(beta <= alpha) break;
+				}
+			}
+		
+		}
+		return {minVal, leastDepth};
+	}
 }
 
-string validation::getNext(string pos, string dir)
+string bot::botMove()
 {
-    vector<int> deltas = convertDir(dir);
-    string ret = "  ";
-    ret[0] = pos[0] + deltas[0];
-    ret[1] = pos[1] + deltas[1];
-    return ret;
+	int bestVal = -infinity;
+	int leastDepth = 100;
+	string bestMove = "None";
+	vector<string> marbleList = getMarbles(botPlayer);
+
+	for(int i = 0; i < marbleList.size(); i++)
+	{
+		
+		string marblePos = marbleList[i];
+		string dirs[] = {"EE", "WW", "NW", "SE", "SW", "NE"};
+		for(int i = 0; i < 6; i++)
+		{
+			string neighbour = comp.getNeighbour(marblePos, dirs[i]);
+
+			string tempMove = marblePos + " " + neighbour;
+			if(comp.validate(tempMove))
+			{
+				MarbleList temp = comp.marbles;
+				int whites = comp.count[white], blacks = comp.count[black];
+
+				comp.move(tempMove);
+
+				vector<int> val = minimax(0, false, -infinity, infinity);
+
+				if(val[0] > bestVal)
+				{
+					bestVal = val[0];
+					leastDepth = val[1];
+					bestMove = tempMove;
+				}
+				else  if(val[0] >= bestVal && val[1] < leastDepth)
+				{
+					bestVal = val[0];
+					leastDepth = val[1];
+					bestMove = tempMove;
+				}
+				else if(val[0] == bestVal && val[1] == leastDepth)
+				{
+					int x = rand() % 2;
+					if(x)
+					{
+						bestVal = val[0];
+						leastDepth = val[1];
+						bestMove = tempMove;
+					}
+				}
+
+				// undo
+				comp.marbles = temp;
+				comp.count[white] = whites;
+				comp.count[black] = blacks;
+				comp.active = !comp.active;
+			}
+		}
+		
+	}
+	return bestMove;
 }
 
-bool validation::isValid(string mov)
+void playAgainstBot(bot b)
 {
-    if (!isStringValid(mov))
-        return false;
+	Board board(white);
+	
+	string s;
 
-    string mar1, mar2;
-    mar1 = mov.substr(0, 2);
-    mar2 = mov.substr(3, 2);
+	while (board.winner() == -1)
+	{
+        board.display();
+		cout << "Your Move: ";
+		if (board.getactive() != b.getplayer())
+		{
+			getline(cin, s);
+            cout << endl;
+			board.move(s);
+		}
 
-    string dir = getDirection(mar1, mar2);
+		//if (s == "exit")
+		//	return;
 
-    if (dir == "")
-    {
-        return false;
-    }
+		// if (board.validate(s))
+		// {
+		// }
+		// // else
+		// {
+		// 	cout << "Invalid Move!" << endl;
+		// 	continue;
+		// }
 
-    if (!isPlayers(mar1, myColor) || !isPlayers(mar2, myColor))
-        return false;
+		if (board.winner() == white)
+		{
+			cout <<"White Won"<<endl;
+			return;
+		}
 
-    string next = getNext(mar2, dir);
+		//board.display();
 
-    if (isPlayers(next, myColor))
-        return false;
+		b.set(board);
+		string compMove = b.botMove();
+		//auto stop = high_resolution_clock::now();
+		//auto duration = duration_cast<milliseconds>(stop - start);
+        board.display();
+		cout << "Bots Move : "<<compMove << endl << endl;
+		// cout << "Counter: " << counter << endl;
+		// counter = 0;
+		// cout << "Time taken: " << duration.count() << "ms" << endl;
+		board.move(compMove);
 
-    if (isPlayers(next, !myColor))
-    {
-        string nextnext = getNext(next, dir);
-        if (isPlayers(nextnext, myColor) || isPlayers(nextnext, !myColor))
-            return false;
-    }
+		//board.display();
 
-    if (cornerPush(next, dir))
-        return false;
-
-    if (!inBoard(next))
-        return false;
-
-    return true;
+		if (board.winner() == black)
+		{
+			cout << "The Bot Wins!" << endl;
+			return;
+		}
+	}
 }
-
-vector<int> validation::convertDir(string Dir)
-{
-    if (Dir == "NE")
-        return {-1, 1};
-    if (Dir == "EE")
-        return {0, 1};
-    if (Dir == "SE")
-        return {1, 0};
-    if (Dir == "SW")
-        return {1, -1};
-    if (Dir == "WW")
-        return {0, -1};
-    if (Dir == "NW")
-        return {-1, 0};
-}
-
-vector<string> validation::getNeighbours(string pos, int val)
-{
-    vector<string> retSt;
-    for (int i = 0; i < 6; i++)
-    {
-        string mar = getNext(pos, directions[i]);
-        if (isPlayers(mar, val))
-            retSt.push_back(mar);
-    }
-    return retSt;
-}
-
-vector<string> validation::getMoves()
-{
-    vector<string> retMoves;
-    for (int i = 0; i < 11; i++)
-        if (players[myColor][i] != "EE")
-        {
-            vector<string> neighs = getNeighbours(players[myColor][i], myColor);
-            for (int j = 0; j < neighs.size(); j++)
-            {
-                string move = players[myColor][i];
-                move = move + " " + neighs[j];
-                if (isValid(move))
-                    retMoves.push_back(move);
-            }
-        }
-    return retMoves;
-}
-
-void validation::move(string mov)
-{
-    string mar1 = mov.substr(0, 2);
-    string mar2 = mov.substr(3, 2);
-
-    string dir = getDirection(mar1, mar2);
-    string opp = getNext(mar2, dir);
-    bool isPush = false;
-
-    if (isPlayers(opp, !myColor))
-        isPush = true;
-    string oppfin = getNext(opp, dir);
-    bool outPush = true;
-
-    if (inBoard(oppfin))
-        outPush = false;
-    else
-        outPush = isPush;
-    if (isPush)
-        for (int i = 0; i < 11; i++)
-            if (players[!myColor][i] == opp)
-                if (!outPush)
-                    players[!myColor][i] = oppfin;
-                else
-                    players[!myColor][i] = "EE";
-
-    if (outPush)
-        marbles[!myColor]--;
-
-    for (int i = 0; i < 11; i++)
-        if (players[myColor][i] == mar1)
-            players[myColor][i] = opp;
-}
-
-int validation::isWin()
-{
-    if (marbles[0] == 7)
-        return 1;
-    else if (marbles[1] == 7)
-        return 0;
-    else
-        return -1;
-}
-
-//-------------------end of validation class functions-------------------
-
-//----------------------bot class functions-------------------------------
-int bot::eval()
-{
-    //botPlayer
-    /*
-        if botplayer wins then +infinity
-        if botplayer loses then -infinity
-        if botplayer pushes x marbles then +x*1000 to value
-        if x of botplayer are pushed then -x*1000 to value
-        https://issel.ee.auth.gr/wp-content/uploads/2016/04/Exploring-Optimization-Strategies-in-Board-Game-Abalone-for-Alpha-Beta-Search.pdf
-    */
-    //If game is Over :
-    if (comp.marbles[botPlayer] == 7)
-        return -infinity;
-    if (comp.marbles[!botPlayer] == 7)
-        return infinity;
-
-    int value = 0;
-    int pushVal = 0;
-    int clusterVal = 0;
-    int centreDistVal = 0;
-    int onEdgeVal = 0;
-
-    //----------Marble out of board-----------
-    //When some marbles are pushed botPlayers or !botPlayers
-    pushVal += (1500 * (Marbles[!botPlayer] - comp.marbles[!botPlayer]));
-    pushVal += (1500 * (comp.marbles[botPlayer] - Marbles[botPlayer]));
-
-    //-----------Cluster Values---------------
-
-    //Finding cluster Values for botPlayer
-    for (int i = 0; i < 11; i++)
-    {
-        if (comp.players[botPlayer][i] != "EE")
-        {
-            int clusVal;
-            vector<string> botNeighs = comp.getNeighbours(comp.players[botPlayer][i], botPlayer);
-            clusVal = clusterValue(botNeighs);
-            clusterVal += clusVal;
-            centreDistVal += centreDist(comp.players[botPlayer][i]);
-        }
-    }
-
-    //Finding cluster Values for !botPlayer
-    for (int i = 0; i < 11; i++)
-    {
-        if (comp.players[!botPlayer][i] != "EE")
-        {
-            int clusVal;
-            vector<string> oppNeighs = comp.getNeighbours(comp.players[!botPlayer][i], !botPlayer);
-            clusVal = clusterValue(oppNeighs);
-            clusterVal -= clusVal;
-            centreDistVal -= centreDist(comp.players[!botPlayer][i]);
-        }
-    }
-
-    //--------------------On Edge Value---------------
-
-    onEdgeVal += edgeValues(botPlayer);
-    onEdgeVal -= edgeValues(!botPlayer);
-
-    //return vals
-    value += pushVal;
-    value += clusterVal;
-    value += centreDistVal;
-    value += onEdgeVal;
-
-    return value;
-}
-
-int bot::clusterValue(vector<string> neighs)
-{
-    if (neighs.size() == 0)
-        return -300;
-    else
-    {
-        int val = 10;
-        val *= neighs.size();
-        return val;
-    }
-}
-
-int bot::centreDist(string pos)
-{
-    string mid = "D3";
-    int mod = 0;
-    if (pos[0] == mid[0])
-        mod = abs(pos[1] - mid[1]);
-    else if (pos[1] == mid[1])
-        mod = abs(mid[0] - pos[0]);
-    else if (mid[0] - pos[0] == pos[1] - mid[1])
-        mod = abs(mid[1] - pos[1]) + 1;
-    else if (pos[0] == 'C')
-    {
-        if (pos[1] == '2' || pos[1] == '7')
-            mod = 3;
-        else
-            mod = 2;
-    }
-    else if (pos[0] == 'E')
-    {
-        if (pos[1] == '1' || pos[1] == '6')
-            mod = 3;
-        else
-            mod = 2;
-    }
-    else if (pos[0] == 'B')
-    {
-        if (pos[1] == '3' || pos[1] == '7')
-            mod = 3;
-        else
-            mod = 2;
-    }
-    else if (pos[0] == 'F')
-    {
-        if (pos[1] == '1' || pos[1] == '5')
-            mod = 3;
-        else
-            mod = 2;
-    }
-    else
-        mod = 4;
-
-    return (4 - mod) * 100;
-}
-
-int bot::edgeValues(bool pl)
-{
-    int risky = 0;
-    for (int i = 0; i < 11; i++)
-    {
-        string pos = comp.players[pl][i];
-        if (pos != "EE")
-        {
-            bool inB = true;
-            for (int di = 0; di < 6 && inB; di++)
-            {
-                string near1 = comp.getNext(pos, directions[di]);
-                inB = inB && comp.inBoard(near1);
-            }
-
-            if (!inB)
-            {
-                for (int di = 0; di < 6 && inB; di++)
-                {
-                    string dir = directions[di];
-                    string oppD = directions[5 - di];
-                    string near1 = comp.getNext(pos, dir);
-                    inB = comp.inBoard(near1);
-                    if (inB)
-                    {
-                        if (comp.isPlayers(near1, !pl))
-                        {
-                            string near2 = comp.getNext(near1, dir);
-                            if (comp.isPlayers(near2, !pl))
-                            {
-                                near1 = comp.getNext(pos, oppD);
-                                if (!comp.inBoard(near1))
-                                    risky += 2;
-                                else if (!comp.isPlayers(near1, pl) && !comp.isPlayers(near1, !pl))
-                                    risky += 1;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return -risky * 200;
-}
-
-string bot::findBestMove()
-{
-    vector<string> allMoves = comp.getMoves();
-    //comp.show();
-    int bestVal = -infinity;
-    vector<string> bestMoves;
-    for (int i = 0; i < allMoves.size(); i++)
-    {
-        string move = allMoves[i];
-        validation temp = comp;
-
-        comp.move(move);
-
-        int moveVal = miniMax(false, 0, -infinity, infinity);
-        //cout<<move<<" "<<moveVal<<endl;
-        if (moveVal > bestVal)
-        {
-            bestMoves.clear();
-            bestMoves.push_back(move);
-            bestVal = moveVal;
-        }
-        else if (moveVal == bestVal)
-        {
-            srand(time(0));
-            int k = rand() % 2;
-            bestMoves.push_back(move);
-            string in = bestMoves[k];
-            bestMoves.clear();
-            bestMoves.push_back(in);
-        }
-        comp = temp;
-    }
-    return bestMoves[0];
-}
-
-int bot::miniMax(bool isMax, int h, int alpha, int beta)
-{
-    if (h == maxD)
-        return eval();
-    if (comp.isWin() != -1)
-        return eval();
-    //cout<<isMax;
-    if (isMax)
-    {
-        int best = -infinity;
-        vector<string> allMoves = comp.getMoves();
-        for (int i = 0; i < allMoves.size(); i++)
-        {
-            string move = allMoves[i];
-            validation temp = comp;
-
-            comp.move(move);
-            int val = miniMax(false, h + 1, alpha, beta);
-            best = max(best, val);
-            alpha = max(alpha, best);
-
-            if (beta <= alpha)
-                break;
-            comp = temp;
-        }
-        return best;
-    }
-    else
-    {
-        int best = infinity;
-        vector<string> allMoves = comp.getMoves();
-        for (int i = 0; i < allMoves.size(); i++)
-        {
-            string move = allMoves[i];
-            validation temp = comp;
-
-            comp.move(move);
-            int val = miniMax(true, h + 1, alpha, beta);
-            best = min(best, val);
-            beta = min(beta, best);
-
-            if (beta <= alpha)
-                break;
-
-            comp = temp;
-        }
-        return best;
-    }
-}
-//---------------end of bot class functions-----------------
-
-//----------------General functions-------------------
-
-vector<int> getCoordinate(string pos)
-{
-    int row = pos[0] - 'A';
-    int col = 0;
-    if (row <= 3)
-        col = row + pos[1] - '7' + 3;
-    else
-        col = pos[1] - '1';
-    return {row, col};
-}
-
-vector<vector<int>> fromListToBoard()
-{
-    vector<vector<int>> board = {
-        {-1, -1, -1, -1},
-        {-1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1},
-        {-1, -1, -1, -1}};
-    for (int j = 0; j < 2; j++)
-        for (int i = 0; i < 11; i++)
-        {
-            vector<int> cood = getCoordinate(Players[j][i]);
-            board[cood[0]][cood[1]] = j;
-        }
-    return board;
-}
-
-int isWin()
-{
-    if (Marbles[0] == 7)
-        return 1;
-    else if (Marbles[1] == 7)
-        return 0;
-    else
-        return -1;
-}
-
-void display()
-{
-    vector<vector<int>> board = fromListToBoard();
-    char row = 'A';
-    int dia = 7;
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 2 - i; j >= 0; j--)
-        {
-            cout << " ";
-        }
-        cout << row << " ";
-        for (int j = 0; j < board[i].size(); j++)
-        {
-            if (board[i][j] == -1)
-                cout << "+ ";
-            else if (board[i][j] == 0)
-                cout << "b ";
-            else
-                cout << "r ";
-        }
-        cout << endl;
-        row++;
-    }
-    for (int i = 4; i < 7; i++)
-    {
-        for (int j = 0; j < i - 3; j++)
-        {
-            cout << " ";
-        }
-        cout << row << " ";
-        for (int j = 0; j < board[i].size(); j++)
-        {
-            if (board[i][j] == -1)
-                cout << "+ ";
-            else if (board[i][j] == 0)
-                cout << "b ";
-            else
-                cout << "r ";
-        }
-        cout << dia << endl;
-        row++;
-        dia--;
-    }
-    for (int i = 0; i < 6; i++)
-        cout << " ";
-    for (int i = 0; i < 4; i++, dia--)
-        cout << 5 - dia << " ";
-    cout << endl
-         << endl;
-}
-
-void actualMove(validation v, string mov, bool turn)
-{
-    string mar1 = mov.substr(0, 2);
-    string mar2 = mov.substr(3, 2);
-
-    string dir = v.getDirection(mar1, mar2);
-    string opp = v.getNext(mar2, dir);
-    bool isPush = false;
-
-    if (v.isPlayers(opp, !turn))
-        isPush = true;
-    string oppfin = v.getNext(opp, dir);
-    bool outPush = isPush;
-
-    if (v.inBoard(oppfin))
-        outPush = false;
-
-    if (isPush)
-        for (int i = 0; i < 11; i++)
-            if (Players[!turn][i] == opp)
-                if (!outPush)
-                    Players[!turn][i] = oppfin;
-                else
-                    Players[!turn][i] = "EE";
-
-    if (outPush && isPush)
-        Marbles[!turn]--;
-
-    for (int i = 0; i < 11; i++)
-        if (Players[turn][i] == mar1)
-            Players[turn][i] = opp;
-}
-
-//submission on website
-
-void play(bool botP)
-{
-    string s;
-    bool turn = false;
-    validation v(turn);
-    do
-    {
-        validation v(turn);
-
-        display();
-        if (!turn)
-        {
-            bot b(turn, v);
-            cout << "Blue's Turn : "; //getline(cin,s);
-            auto start = high_resolution_clock::now();
-            if (botP == turn)
-            {
-                s = b.findBestMove();
-                cout << s << endl
-                     << endl;
-            }
-            else
-                getline(cin, s);
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<microseconds>(stop - start);
-            float time = duration.count() / 1000000.0;
-            display();
-            cout << s << " ----Time : " << time << "s----" << endl
-                 << endl;
-        }
-        else
-        {
-            bot b(turn, v);
-            cout << "Red's Turn : "; //getline(cin,s);
-            auto start = high_resolution_clock::now();
-            if (botP == turn)
-            {
-                s = b.findBestMove();
-                cout << s << endl
-                     << endl;
-            }
-            else
-                getline(cin, s);
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<microseconds>(stop - start);
-            float time = duration.count() / 1000000.0;
-            display();
-            cout << s << " ----Time : " << time << "s----" << endl
-                 << endl;
-        }
-        actualMove(v, s, turn);
-        v.move(s);
-        turn = !turn;
-    } while (isWin() == -1);
-}
-
-//bot vs bot
-/*
-void play(bool botP)
-{
-    string s;
-    bool turn = false;
-    validation v(turn);
-    do
-    {
-    	validation v(turn);
-        
-        display();
-        if(!turn)
-        {
-            bot b(turn, v);
-            cout<<"Blue's Turn : "; //getline(cin,s);
-            auto start = high_resolution_clock::now();
-            //if(botP == turn)
-            {
-                s = b.findBestMove(); 
-                cout<<s<<endl;
-            } 
-            //else
-              //  getline(cin,s);
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<microseconds>(stop - start);
-            float time = duration.count()/1000000.0;
-            cout<<s<<" ----Time : "<<time<<"s----"<<endl;
-        }
-        else
-        {
-            bot b(turn, v);
-            cout<<"Red's Turn : "; //getline(cin,s);
-            auto start = high_resolution_clock::now();
-            //if(botP == turn)
-            {
-                s = b.findBestMove();  
-                cout<<s<<endl;
-            }
-            //else
-              //  getline(cin,s);
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<microseconds>(stop - start);
-            float time = duration.count()/1000000.0;
-            cout<<s<<" ----Time : "<<time<<"s----"<<endl;
-        }
-        actualMove(v,s,turn);
-        v.move(s);
-        turn = !turn;
-    }while(isWin()==-1);
-    
-    if(isWin()==1)
-        cout<<"Red wins\n";
-    else
-        cout<<"Blue wins\n";   
-}*/
-
-//bot vs player
-/*
-void play(bool botP)
-{
-    string s;
-    bool turn = false;
-    validation v(turn);
-    do
-    {
-    	validation v(turn);
-        
-        display();
-        if(!turn)
-        {
-            bot b(turn, v);
-            cout<<"Blue's Turn : "; //getline(cin,s);
-            auto start = high_resolution_clock::now();
-            if(botP == turn)
-            {
-                s = b.findBestMove(); 
-                cout<<s<<endl;
-            } 
-            else
-                getline(cin,s);
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<microseconds>(stop - start);
-            float time = duration.count()/1000000.0;
-            cout<<"/n ----Time : "<<time<<"s----"<<endl;
-        }
-        else
-        {
-            bot b(turn, v);
-            cout<<"Red's Turn : "; //getline(cin,s);
-            auto start = high_resolution_clock::now();
-            if(botP == turn)
-            {
-                s = b.findBestMove();  
-                cout<<s<<endl;
-            }
-            else
-                getline(cin,s);
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<microseconds>(stop - start);
-            float time = duration.count()/1000000.0;
-            cout<<"/n ----Time : "<<time<<"s----"<<endl;
-        }
-        actualMove(v,s,turn);
-        v.move(s);
-        turn = !turn;
-    }while(isWin()==-1);
-    
-    if(isWin()==1)
-        cout<<"Red wins\n";
-    else
-        cout<<"Blue wins\n";  
-}*/
 
 int main()
 {
-    int botP;
-    cin >> botP;
-    cin.ignore(1);
-    //getline(cin, botP);
-
-    if (botP == 1)
-        play(true);
-    else
-        play(false);
-    return 0;
+	Board board(white);
+	int player = black;
+	//cin >> player;
+	//cin.get();
+	bot b1(board, 3, player);
+	playAgainstBot(b1);
 }
